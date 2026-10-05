@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "qa-assistant": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "--quiet", "--frozen", "qa-assistant-mcp"]
+    }
+  }
+}

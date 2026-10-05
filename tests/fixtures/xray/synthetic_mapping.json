@@ -1,0 +1,30 @@
+{
+  "name": "synthetic-placeholder",
+  "synthetic": true,
+  "delimiter": ",",
+  "multi_value_separator": ";",
+  "encoding": "utf-8",
+  "line_terminator": "\r\n",
+  "repeat_test_fields_on_every_row": false,
+  "columns": [
+    {"header": "TCID", "source": "test_case_id"},
+    {"header": "Summary", "source": "title"},
+    {"header": "Description", "source": "objective"},
+    {"header": "Preconditions", "source": "preconditions"},
+    {"header": "Priority", "source": "priority"},
+    {"header": "Labels", "source": "labels"},
+    {"header": "Component", "source": "components"},
+    {"header": "Requirement", "source": "story_key"},
+    {"header": "Test Type", "source": "constant", "value": "Manual"},
+    {"header": "Step", "source": "step_number"},
+    {"header": "Action", "source": "step_action"},
+    {"header": "Data", "source": "step_data"},
+    {"header": "Expected Result", "source": "step_expected_result"}
+  ],
+  "priority_map": {
+    "critical": "Highest",
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low"
+  }
+}
