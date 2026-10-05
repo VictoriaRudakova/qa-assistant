@@ -33,7 +33,8 @@ Then open the repository in Claude Code. The `qa-assistant` MCP server is regist
 | `/review-test-cases <run_id>` | Independent review, optionally a better revision |
 | `/export-xray <run_id>` | Validate and export CSV to `output/runs/<run_id>/` |
 
-> Phase 0: Jira HTTP calls are not implemented yet. Paste the story text when asked.
+> Jira reads are read-only and scoped to `JIRA_PROJECT_KEY`. Without Jira configuration,
+> paste the story text when asked.
 > CSV export needs `XRAY_CSV_MAPPING_FILE`; the real mapping is not configured yet.
 
 ## Configuration
@@ -45,7 +46,7 @@ All settings are environment variables (see `.env.example`):
 | `JIRA_BASE_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN` | Jira access (TEST instance, read-only account) |
 | `JIRA_PROJECT_KEY` | All Jira reads are restricted to this project |
 | `JIRA_ACCEPTANCE_CRITERIA_FIELD` | e.g. `customfield_10042`; empty = parse the description |
-| `JIRA_DEPLOYMENT` | Optional: `cloud` / `data_center` |
+| `JIRA_DEPLOYMENT` | `cloud` / `data_center`; optional for `*.atlassian.net` (Cloud) |
 | `XRAY_CSV_MAPPING_FILE` | JSON column mapping for the Xray Test Case Importer |
 | `QA_OUTPUT_DIR`, `QA_LOG_LEVEL` | Artifact directory (default `output/`), log level |
 

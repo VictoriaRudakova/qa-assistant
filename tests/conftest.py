@@ -16,8 +16,13 @@ from tests.support import FIXED_NOW, FIXTURES, RUN_ID, FakeJiraClient, load_json
 
 
 @pytest.fixture(autouse=True)
-def _isolated_env(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Tests never see real JIRA_*/XRAY_*/QA_* configuration from the developer's shell."""
+def _isolated_env(request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Tests never see real JIRA_*/XRAY_*/QA_* configuration from the developer's shell.
+
+    Exception: opt-in ``live`` tests, which exist to use that configuration.
+    """
+    if request.node.get_closest_marker("live"):
+        return
     for name in list(os.environ):
         if name.startswith(("JIRA_", "XRAY_", "QA_")):
             monkeypatch.delenv(name)

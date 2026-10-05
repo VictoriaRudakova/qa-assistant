@@ -11,6 +11,9 @@ Input text convention (the Cloud/DC adapters must normalize ADF / wiki markup to
   checkbox markers ``[ ]`` / ``[x]`` are stripped;
 * Gherkin:   ``Scenario:`` / ``Given`` / ``When`` / ``Then`` / ``And`` / ``But`` lines are
   grouped into one criterion per scenario.
+
+Criteria are renumbered AC-1..AC-n, so an author's own leading label (``AC1.``, ``AC1:``,
+``AC-1.``, ``AC-1:``) is stripped from the criterion text.
 """
 
 from __future__ import annotations
@@ -29,6 +32,7 @@ _SCENARIO_RE = re.compile(r"^\s*scenario(?:\s+outline)?\s*:", re.IGNORECASE)
 _GIVEN_RE = re.compile(r"^\s*given\b", re.IGNORECASE)
 _STEP_RE = re.compile(r"^\s*(?:when|then|and|but)\b", re.IGNORECASE)
 _THEN_RE = re.compile(r"^\s*then\b", re.IGNORECASE)
+_LABEL_RE = re.compile(r"^AC[-\s]?\d+\s*[.:]\s*", re.IGNORECASE)
 
 
 def extract_acceptance_criteria(
@@ -41,10 +45,16 @@ def extract_acceptance_criteria(
     else:
         texts = parse_criteria_items(find_acceptance_criteria_section(description))
         source = AcceptanceCriterionSource.DESCRIPTION
+    texts = [text for raw in texts if (text := strip_criterion_label(raw))]
     return [
         AcceptanceCriterion(id=f"AC-{n}", text=text, source=source)
         for n, text in enumerate(texts, start=1)
     ]
+
+
+def strip_criterion_label(text: str) -> str:
+    """Remove a leading author label such as ``AC1.`` / ``AC-1:`` from a criterion."""
+    return _LABEL_RE.sub("", text.strip(), count=1).strip()
 
 
 def _heading_title(line: str) -> str | None:

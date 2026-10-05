@@ -20,7 +20,7 @@ Imports only flow downward: `mcp -> services -> adapters/logic -> domain`.
 flowchart LR
     U[User: /qa-story DEMO-101] --> S[Skill qa-story]
     S -->|jira_get_story| M[(MCP server)]
-    M --> J[ProjectScopedJiraClient] --> JC[Jira client - Phase 3]
+    M --> J[ProjectScopedJiraClient] --> JC[HttpJiraClient - read-only GET]
     S --> A[story-analyst] -->|submit_story_analysis| M
     S --> D[test-designer] -->|submit_test_cases| M
     S --> R[test-reviewer] -->|validate / submit_test_cases| M

@@ -4,7 +4,7 @@ import pytest
 
 from qa_assistant.config.settings import JiraSettings
 from qa_assistant.domain.story import JiraStory, JiraStorySummary, StorySearchPage
-from qa_assistant.errors import NotConfiguredError, NotFoundError, NotImplementedYetError
+from qa_assistant.errors import NotConfiguredError, NotFoundError
 from qa_assistant.jira.factory import UnavailableJiraClient, build_jira_client
 from qa_assistant.jira.scoping import ProjectScopedJiraClient, issue_in_project, scope_jql
 from tests.support import FakeJiraClient
@@ -65,6 +65,7 @@ def test_factory_passes_search_cap_from_settings() -> None:
             "email": "qa.bot@example.com",
             "api_token": "not-a-real-token",
             "project_key": "DEMO",
+            "deployment": "cloud",
             "max_search_results": 7,
         }
     )
@@ -87,20 +88,20 @@ def test_factory_reports_missing_settings() -> None:
         client.get_story("DEMO-1")
 
 
-def test_factory_configured_is_scoped_but_not_implemented() -> None:
+def test_factory_configured_is_scoped_before_any_request() -> None:
     settings = JiraSettings.model_validate(
         {
             "base_url": "https://jira.example.com",
             "email": "qa.bot@example.com",
             "api_token": "not-a-real-token",
             "project_key": "DEMO",
+            "deployment": "cloud",
         }
     )
     client = build_jira_client(settings)
+    assert isinstance(client, ProjectScopedJiraClient)
     with pytest.raises(NotFoundError):
-        client.get_story("OTHER-1")  # scoping applies before the (missing) HTTP client
-    with pytest.raises(NotImplementedYetError):
-        client.get_story("DEMO-1")
+        client.get_story("OTHER-1")  # rejected before the HTTP client is reached
 
 
 def test_search_page_model_copy_keeps_token() -> None:
