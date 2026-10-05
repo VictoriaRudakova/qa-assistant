@@ -1,0 +1,11 @@
+TCID,Summary,Description,Preconditions,Priority,Labels,Component,Requirement,Test Type,Step,Action,Data,Expected Result
+TC-001,Forgot password link is visible on sign-in page,Verify the password reset entry point is available to signed-out users.,User is signed out.,Medium,password-reset,Accounts,DEMO-101,Manual,1,Open the sign-in page.,,"The ""Forgot password?"" link is displayed below the password field."
+TC-002,Registered email receives a reset link valid for 30 minutes,"Verify a registered customer receives a working, time-limited reset link.","Customer account exists for qa.user@example.com.
+Mail catcher is reachable.",High,password-reset,Accounts,DEMO-101,Manual,1,"Open the ""Forgot password?"" page.",,The reset request form is displayed.
+TC-002,,,,,,,,,2,Submit the registered email address.,qa.user@example.com,A confirmation message is shown and one reset email is delivered.
+TC-002,,,,,,,,,3,Open the reset link from the email within 30 minutes.,,The set-new-password form is displayed.
+TC-003,Reset link is rejected after 30 minutes,Verify link expiry is enforced.,A reset link was requested 31 minutes ago.,High,password-reset;security,Accounts,DEMO-101,Manual,1,Open the expired reset link.,,"An ""expired link"" message is shown and no password form is displayed."
+TC-004,Unregistered email shows the same confirmation message,Verify the response does not reveal whether an account exists.,No account exists for nobody@example.com.,Highest,password-reset;security,Accounts,DEMO-101,Manual,1,Submit an unregistered email on the reset form.,nobody@example.com,The confirmation text is identical to the registered-email case and no email is sent.
+TC-005,New password length boundaries 11/12/64/65,Verify the 12-64 character password policy at its boundaries.,A valid reset link is open.,High,password-reset,Accounts,DEMO-101,Manual,1,Enter an 11-character password and submit.,Abcdefgh1!x,Validation error: password must be 12-64 characters.
+TC-005,,,,,,,,,2,Enter a 12-character password and submit.,Abcdefgh1!xy,Password is accepted and the success page is shown.
+TC-005,,,,,,,,,3,"Request a new link, enter a 65-character password and submit.",'=SUM(A1) followed by 57 more characters to reach 65 total length,Validation error: password must be 12-64 characters.

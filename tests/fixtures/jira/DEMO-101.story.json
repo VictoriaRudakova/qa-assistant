@@ -1,0 +1,23 @@
+{
+  "key": "DEMO-101",
+  "url": "https://jira.example.com/browse/DEMO-101",
+  "summary": "Customer can reset a forgotten password via email",
+  "issue_type": "Story",
+  "status": "Ready for QA",
+  "priority": "High",
+  "labels": ["auth", "acme-shop"],
+  "components": ["Accounts"],
+  "description": "As a registered ACME Shop customer\nI want to reset my password by email\nSo that I can regain access to my account.\n\n## Acceptance Criteria\n- A \"Forgot password?\" link is shown on the sign-in page.\n- Submitting a registered email sends a reset link valid for 30 minutes.\n- Submitting an unregistered email shows the same confirmation message (no account enumeration).\n- The new password must be 12-64 characters long.\n\n## Notes\nRate limiting is handled by the platform team.",
+  "acceptance_criteria": [
+    {"id": "AC-1", "text": "A \"Forgot password?\" link is shown on the sign-in page.", "source": "description"},
+    {"id": "AC-2", "text": "Submitting a registered email sends a reset link valid for 30 minutes.", "source": "description"},
+    {"id": "AC-3", "text": "Submitting an unregistered email shows the same confirmation message (no account enumeration).", "source": "description"},
+    {"id": "AC-4", "text": "The new password must be 12-64 characters long.", "source": "description"}
+  ],
+  "links": [
+    {"key": "DEMO-90", "summary": "Transactional email service", "issue_type": "Epic", "status": "Done", "relation": "is part of"}
+  ],
+  "subtasks": [],
+  "comments": [],
+  "fetched_at": "2026-10-05T12:00:00Z"
+}

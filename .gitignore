@@ -1,20 +1,34 @@
+# Secrets: never commit. Only the template is tracked.
 .env
 .env.*
 !.env.example
 
+# Python / tooling
 .venv/
 venv/
 __pycache__/
 *.pyc
-
+*.egg-info/
+build/
+dist/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
 
+# IDEs
 .idea/
 .vscode/
 
-output/*.csv
+# Generated artifacts may contain real Jira data: ignore everything under output/.
+output/*
 !output/.gitkeep
 
+# Local Xray mapping for the real instance (commit only after review/sanitization).
+config/*.local.json
+
+# Claude Code personal settings
 .claude/settings.local.json

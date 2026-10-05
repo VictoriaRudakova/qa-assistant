@@ -1,0 +1,26 @@
+{
+  "story_key": "DEMO-101",
+  "summary": "Self-service password reset by email for registered customers, with a time-limited link, no account enumeration and a password length policy.",
+  "requirements": [
+    "Sign-in page exposes a password reset entry point.",
+    "Reset link is emailed to registered addresses and expires after 30 minutes.",
+    "Response does not reveal whether an email is registered.",
+    "New password length is 12-64 characters."
+  ],
+  "acceptance_criteria": [
+    {"id": "AC-1", "text": "A \"Forgot password?\" link is shown on the sign-in page.", "source": "description"},
+    {"id": "AC-2", "text": "Submitting a registered email sends a reset link valid for 30 minutes.", "source": "description"},
+    {"id": "AC-3", "text": "Submitting an unregistered email shows the same confirmation message (no account enumeration).", "source": "description"},
+    {"id": "AC-4", "text": "The new password must be 12-64 characters long.", "source": "description"}
+  ],
+  "findings": [
+    {"id": "F-1", "kind": "missing_requirement", "text": "Behaviour when a reset link is used twice is not specified.", "related_ac_ids": ["AC-2"]},
+    {"id": "F-2", "kind": "question", "text": "Are existing sessions invalidated after a successful reset?", "related_ac_ids": []}
+  ],
+  "risks": [
+    {"id": "R-1", "title": "Account enumeration", "description": "Different responses or timings for registered vs unregistered emails reveal account existence.", "category": "security", "likelihood": "medium", "impact": "high", "related_ac_ids": ["AC-3"]},
+    {"id": "R-2", "title": "Expired link accepted", "description": "Link expiry not enforced server-side.", "category": "security", "likelihood": "low", "impact": "high", "related_ac_ids": ["AC-2"]}
+  ],
+  "assumptions": ["Email delivery is available in the test environment (mail catcher)."],
+  "out_of_scope": ["Rate limiting (platform team)."]
+}

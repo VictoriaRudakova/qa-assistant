@@ -1,0 +1,73 @@
+[
+  {
+    "title": "Forgot password link is visible on sign-in page",
+    "objective": "Verify the password reset entry point is available to signed-out users.",
+    "preconditions": ["User is signed out."],
+    "steps": [
+      {"action": "Open the sign-in page.", "expected_result": "The \"Forgot password?\" link is displayed below the password field."}
+    ],
+    "priority": "medium",
+    "technique": "positive",
+    "covers": ["AC-1"],
+    "labels": ["password-reset"],
+    "components": ["Accounts"]
+  },
+  {
+    "title": "Registered email receives a reset link valid for 30 minutes",
+    "objective": "Verify a registered customer receives a working, time-limited reset link.",
+    "preconditions": ["Customer account exists for qa.user@example.com.", "Mail catcher is reachable."],
+    "steps": [
+      {"action": "Open the \"Forgot password?\" page.", "expected_result": "The reset request form is displayed."},
+      {"action": "Submit the registered email address.", "data": "qa.user@example.com", "expected_result": "A confirmation message is shown and one reset email is delivered."},
+      {"action": "Open the reset link from the email within 30 minutes.", "expected_result": "The set-new-password form is displayed."}
+    ],
+    "priority": "high",
+    "technique": "positive",
+    "covers": ["AC-2"],
+    "labels": ["password-reset"],
+    "components": ["Accounts"]
+  },
+  {
+    "title": "Reset link is rejected after 30 minutes",
+    "objective": "Verify link expiry is enforced.",
+    "preconditions": ["A reset link was requested 31 minutes ago."],
+    "steps": [
+      {"action": "Open the expired reset link.", "expected_result": "An \"expired link\" message is shown and no password form is displayed."}
+    ],
+    "priority": "high",
+    "technique": "boundary_value",
+    "covers": ["AC-2"],
+    "risk_ids": ["R-2"],
+    "labels": ["password-reset", "security"],
+    "components": ["Accounts"]
+  },
+  {
+    "title": "Unregistered email shows the same confirmation message",
+    "objective": "Verify the response does not reveal whether an account exists.",
+    "preconditions": ["No account exists for nobody@example.com."],
+    "steps": [
+      {"action": "Submit an unregistered email on the reset form.", "data": "nobody@example.com", "expected_result": "The confirmation text is identical to the registered-email case and no email is sent."}
+    ],
+    "priority": "critical",
+    "technique": "negative",
+    "covers": ["AC-3"],
+    "risk_ids": ["R-1"],
+    "labels": ["password-reset", "security"],
+    "components": ["Accounts"]
+  },
+  {
+    "title": "New password length boundaries 11/12/64/65",
+    "objective": "Verify the 12-64 character password policy at its boundaries.",
+    "preconditions": ["A valid reset link is open."],
+    "steps": [
+      {"action": "Enter an 11-character password and submit.", "data": "Abcdefgh1!x", "expected_result": "Validation error: password must be 12-64 characters."},
+      {"action": "Enter a 12-character password and submit.", "data": "Abcdefgh1!xy", "expected_result": "Password is accepted and the success page is shown."},
+      {"action": "Request a new link, enter a 65-character password and submit.", "data": "=SUM(A1) followed by 57 more characters to reach 65 total length", "expected_result": "Validation error: password must be 12-64 characters."}
+    ],
+    "priority": "high",
+    "technique": "boundary_value",
+    "covers": ["AC-4"],
+    "labels": ["password-reset"],
+    "components": ["Accounts"]
+  }
+]
