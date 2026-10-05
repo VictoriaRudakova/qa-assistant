@@ -40,4 +40,4 @@ numbers) and control characters.
 
 - Xray flavour (Cloud vs Data Center) and a **sanitized** Test Case Importer CSV/config, to
   write the real mapping file and a golden test for it.
-- Jira deployment type and AC custom field id of the TEST instance (Phase 3).
+- AC custom field id of the TEST instance, if ACs live outside the description.

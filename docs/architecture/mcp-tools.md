@@ -27,6 +27,7 @@ Anticipated failures return `isError: true` with the message `[<code>] <message>
 are defined in `src/qa_assistant/errors.py`:
 - `not_configured`
 - `not_implemented`
+- `jira_error`: Jira auth failure, network error or timeout, rate limit, rejected JQL, or a server error
 - `not_found`
 - `invalid_artifact`
 - `export_blocked`

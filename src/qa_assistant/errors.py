@@ -48,3 +48,9 @@ class ExportBlockedError(QAAssistantError):
     """Export refused, e.g. because the test cases have validation errors."""
 
     code = "export_blocked"
+
+
+class JiraRequestError(QAAssistantError):
+    """Jira could not serve a read (credentials, network, rate limit, bad JQL, server error)."""
+
+    code = "jira_error"

@@ -18,6 +18,7 @@ Story key: `$ARGUMENTS` (ask for it if missing).
      paste the story (summary, description, acceptance criteria) and continue with that.
      Remind them to paste synthetic or approved test data only.
    - `[not_found]`: report it and stop.
+   - `[jira_error]`: report the message (credentials, network, rate limit) and stop.
 2. **Analyze.** Delegate to the `story-analyst` subagent with the key (or pasted text).
    Collect the `run_id`, PO questions and high risks.
 3. **Design.** Delegate to the `test-designer` subagent with the `run_id` and the analysis

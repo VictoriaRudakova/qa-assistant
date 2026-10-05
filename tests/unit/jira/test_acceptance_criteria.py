@@ -8,6 +8,7 @@ from qa_assistant.jira.acceptance_criteria import (
     extract_acceptance_criteria,
     find_acceptance_criteria_section,
     parse_criteria_items,
+    strip_criterion_label,
 )
 
 
@@ -120,3 +121,36 @@ def test_fixture_story_criteria_match_extraction(story: JiraStory) -> None:
     """The synthetic story's stored ACs are exactly what extraction yields."""
     extracted = extract_acceptance_criteria(field_value=None, description=story.description)
     assert extracted == story.acceptance_criteria
+
+
+@pytest.mark.parametrize(
+    ("raw", "expected"),
+    [
+        ("AC1. A customer can add a product.", "A customer can add a product."),
+        ("AC1: A customer can add a product.", "A customer can add a product."),
+        ("AC-1. A customer can add a product.", "A customer can add a product."),
+        ("AC-1: A customer can add a product.", "A customer can add a product."),
+        ("ac 12 :  Lower case, spaced", "Lower case, spaced"),
+        ("AC1.\nLabel on its own line", "Label on its own line"),
+        ("ACCOUNT is locked after 3 attempts", "ACCOUNT is locked after 3 attempts"),
+        ("AC1 without punctuation stays", "AC1 without punctuation stays"),
+        ("Total AC1: is not a leading label", "Total AC1: is not a leading label"),
+        ("AC-2:", ""),
+    ],
+)
+def test_strip_criterion_label(raw: str, expected: str) -> None:
+    assert strip_criterion_label(raw) == expected
+
+
+def test_labels_are_stripped_and_label_only_items_dropped() -> None:
+    acs = extract_acceptance_criteria(
+        field_value=None,
+        description=(
+            "Acceptance Criteria\n\nAC1. Add an in-stock product.\n\nAC-2:\n\n"
+            "AC-3: Remove a product."
+        ),
+    )
+    assert [(ac.id, ac.text) for ac in acs] == [
+        ("AC-1", "Add an in-stock product."),
+        ("AC-2", "Remove a product."),
+    ]

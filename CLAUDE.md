@@ -27,12 +27,14 @@ uv run mypy                              # strict, src + tests
 uv run pre-commit run --all-files        # ruff, mypy, gitleaks, private-key + output/ guards
 UPDATE_GOLDEN=1 uv run pytest tests/unit/xray      # regenerate CSV golden file
 UPDATE_SNAPSHOTS=1 uv run pytest tests/mcp         # regenerate MCP tool contract
+JIRA_LIVE_TEST_ISSUE=<KEY> uv run pytest -m live    # opt-in read-only Jira smoke test
 ```
 
 ## Layout
 
 - `src/qa_assistant/domain/` - pure Pydantic models (story, analysis, test case, validation)
-- `src/qa_assistant/jira/` - Jira port, project scoping, AC extraction (HTTP client: Phase 3)
+- `src/qa_assistant/jira/` - Jira port, project scoping, AC extraction, read-only HTTP client
+  (`client.py`, GET-only `http.py`), ADF/wiki -> text (`text.py`)
 - `src/qa_assistant/analysis/`, `testdesign/` - deterministic checks, coverage, rule engine
 - `src/qa_assistant/xray/` - configurable column mapping + mapping-driven CSV exporter
 - `src/qa_assistant/storage/` - file-based run store; `services/` - use cases
@@ -47,13 +49,15 @@ Reads: `jira_get_story`, `jira_search_stories`, `get_run`, `list_runs`, `validat
 Writes (local only): `submit_story_analysis`, `submit_test_cases`, `export_xray_csv`.
 Future (separate approval): `xray_create_tests`, `xray_link_tests_to_story`.
 
-## Current status: Phase 0 (foundation)
+## Current status
 
-- No real Jira or Xray API calls yet. `jira_*` tools return `[not_configured]` or
-  `[not_implemented]`; skills fall back to pasted story text.
+- Jira reads are live (read-only, GET only): `jira_get_story`, `jira_search_stories` against
+  the TEST instance, scoped to `JIRA_PROJECT_KEY`. Without configuration they return
+  `[not_configured]` and skills fall back to pasted story text. HTTP failures are `[jira_error]`.
 - Jira deployment type and the AC custom field are configuration
-  (`JIRA_DEPLOYMENT`, `JIRA_ACCEPTANCE_CRITERIA_FIELD`), not hardcoded. A TEST Jira instance
-  will be used.
+  (`JIRA_DEPLOYMENT`, `JIRA_ACCEPTANCE_CRITERIA_FIELD`), not hardcoded. If `JIRA_DEPLOYMENT`
+  is unset, `*.atlassian.net` hosts are treated as Cloud; other hosts must set it.
+- No Xray API calls yet.
 - The Xray CSV mapping is configuration (`XRAY_CSV_MAPPING_FILE`); tests use a synthetic
   placeholder mapping that is not valid for real import.
 
