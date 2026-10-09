@@ -42,7 +42,8 @@ output/runs/<run_id>/
 Export reads `test_cases.r<N>.json` from disk and re-validates it. It never takes test-case
 content from the model. Validation reports are not stored: they are recomputed on demand
 (`submit_test_cases`, `validate_test_cases`, export), so they can't go stale. Agents read a run
-through `get_run`, never through file paths.
+through the sectioned read tools (`get_run`, `get_story_analysis`, `list_test_cases`,
+`get_test_cases`), never through file paths.
 
 ## Validation layers
 

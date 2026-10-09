@@ -1,0 +1,36 @@
+{
+  "description": "Negative control: a ready test asserts an answer to open question F-1.",
+  "extends": "reference",
+  "expected_failed_checks": [
+    "unsupported_assertions",
+    "validation"
+  ],
+  "append_test_cases": [
+    {
+      "title": "Adding the same product twice increases its quantity",
+      "objective": "Verify: Adding the same product twice increases its quantity.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Click \"Add to cart\" twice on Demo Mug.",
+          "expected_result": "The cart has one Demo Mug line with quantity 2."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [],
+      "risk_ids": [],
+      "finding_ids": [
+        "F-1"
+      ],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Cart"
+      ]
+    }
+  ]
+}

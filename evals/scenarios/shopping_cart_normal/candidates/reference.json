@@ -1,0 +1,266 @@
+{
+  "description": "Complete analysis and ready tests for every AC.",
+  "analysis": {
+    "story_key": "DEMO-201",
+    "summary": "Cart line management: add, change quantity within 1-10, remove, and subtotal maths.",
+    "requirements": [],
+    "acceptance_criteria": [
+      {
+        "id": "AC-1",
+        "text": "Clicking \"Add to cart\" on an in-stock product adds one unit of it to the cart.",
+        "source": "description"
+      },
+      {
+        "id": "AC-2",
+        "text": "The quantity of a cart line can be changed to any whole number from 1 to 10.",
+        "source": "description"
+      },
+      {
+        "id": "AC-3",
+        "text": "Removing a cart line deletes it and updates the cart subtotal immediately.",
+        "source": "description"
+      },
+      {
+        "id": "AC-4",
+        "text": "The cart subtotal equals the sum of unit price multiplied by quantity for every line.",
+        "source": "description"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F-1",
+        "kind": "question",
+        "text": "Does adding a product that is already in the cart create a second line or increase the quantity?",
+        "related_ac_ids": [
+          "AC-1"
+        ]
+      },
+      {
+        "id": "F-2",
+        "kind": "missing_requirement",
+        "text": "Behaviour when adding an out-of-stock product is not specified.",
+        "related_ac_ids": [
+          "AC-1"
+        ]
+      }
+    ],
+    "risks": [
+      {
+        "id": "R-1",
+        "title": "Subtotal rounding error",
+        "description": "Decimal prices multiplied by quantity may be rounded incorrectly.",
+        "category": "functional",
+        "likelihood": "medium",
+        "impact": "high",
+        "related_ac_ids": [
+          "AC-4"
+        ]
+      },
+      {
+        "id": "R-2",
+        "title": "Invalid quantity accepted",
+        "description": "Out-of-range quantities could reach the order.",
+        "category": "data",
+        "likelihood": "medium",
+        "impact": "medium",
+        "related_ac_ids": [
+          "AC-2"
+        ]
+      }
+    ],
+    "assumptions": [
+      "Prices are shown in EUR with two decimals."
+    ],
+    "out_of_scope": []
+  },
+  "test_cases": [
+    {
+      "title": "Add to cart adds one unit of an in-stock product",
+      "objective": "Verify: Add to cart adds one unit of an in-stock product.",
+      "preconditions": [
+        "Cart is empty."
+      ],
+      "steps": [
+        {
+          "action": "Open the product page of an in-stock product and click \"Add to cart\".",
+          "data": "Product: Demo Mug, stock 5",
+          "expected_result": "The cart shows one line for Demo Mug with quantity 1."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-1"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Cart"
+      ]
+    },
+    {
+      "title": "Quantity accepts the boundary values 1 and 10",
+      "objective": "Verify: Quantity accepts the boundary values 1 and 10.",
+      "preconditions": [
+        "Cart contains Demo Mug."
+      ],
+      "steps": [
+        {
+          "action": "Set the Demo Mug line quantity to 10.",
+          "data": "10",
+          "expected_result": "The line quantity is 10."
+        },
+        {
+          "action": "Set the Demo Mug line quantity to 1.",
+          "data": "1",
+          "expected_result": "The line quantity is 1."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "boundary_value",
+      "covers": [
+        "AC-2"
+      ],
+      "risk_ids": [
+        "R-2"
+      ],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Cart"
+      ]
+    },
+    {
+      "title": "Quantity outside 1 to 10 is not applied",
+      "objective": "Verify: Quantity outside 1 to 10 is not applied.",
+      "preconditions": [
+        "Cart contains Demo Mug with quantity 1."
+      ],
+      "steps": [
+        {
+          "action": "Set the Demo Mug line quantity to 11.",
+          "data": "11",
+          "expected_result": "The line quantity stays at its previous value of 1."
+        },
+        {
+          "action": "Set the Demo Mug line quantity to 0.",
+          "data": "0",
+          "expected_result": "The line quantity stays at its previous value of 1."
+        }
+      ],
+      "status": "ready",
+      "priority": "high",
+      "technique": "boundary_value",
+      "covers": [
+        "AC-2"
+      ],
+      "risk_ids": [
+        "R-2"
+      ],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Cart"
+      ]
+    },
+    {
+      "title": "Removing a line updates the subtotal immediately",
+      "objective": "Verify: Removing a line updates the subtotal immediately.",
+      "preconditions": [
+        "Cart contains Demo Mug and Demo Pen, quantity 1 each."
+      ],
+      "steps": [
+        {
+          "action": "Remove the Demo Mug line from a cart with Demo Mug (5.00) and Demo Pen (2.50).",
+          "expected_result": "The Demo Mug line disappears and the subtotal shows 2.50 without reloading the page."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-3"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Cart"
+      ]
+    },
+    {
+      "title": "Subtotal sums unit price times quantity across lines",
+      "objective": "Verify: Subtotal sums unit price times quantity across lines.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Open the cart with Demo Mug x3 at 4.99 and Demo Pen x2 at 0.35.",
+          "expected_result": "The subtotal shows 15.67."
+        }
+      ],
+      "status": "ready",
+      "priority": "high",
+      "technique": "equivalence_partitioning",
+      "covers": [
+        "AC-4"
+      ],
+      "risk_ids": [
+        "R-1"
+      ],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Cart"
+      ]
+    },
+    {
+      "title": "Non-numeric quantity input is rejected",
+      "objective": "Verify: Non-numeric quantity input is rejected.",
+      "preconditions": [
+        "Cart contains Demo Mug with quantity 1."
+      ],
+      "steps": [
+        {
+          "action": "Type \"abc\" into the Demo Mug quantity field and confirm.",
+          "data": "abc",
+          "expected_result": "The quantity field shows a validation message and the line quantity stays 1."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-2"
+      ],
+      "risk_ids": [
+        "R-2"
+      ],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Cart"
+      ]
+    }
+  ]
+}

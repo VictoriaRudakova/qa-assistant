@@ -15,7 +15,7 @@ Every `submit_*` call persists validated JSON under `output/runs/<run_id>/`. Eac
 submission is a complete new revision (`test_cases.r<N>.json`). Later tools take `run_id`
 (and optionally `revision`). `export_xray_csv` reads the stored revision and re-validates it
 before rendering. Validation reports are recomputed whenever they're needed, never stored, so
-no stale copy can exist. Agents read runs through the `get_run` tool, so the on-disk layout
+no stale copy can exist. Agents read runs through the MCP read tools, so the on-disk layout
 stays an implementation detail.
 
 Run ids look like `YYYYMMDDTHHMMSSZ-xxxxxx`, are pattern-validated, and resolve only inside

@@ -1,0 +1,198 @@
+{
+  "description": "Negative control: the conflict is not raised and the analyst picks an answer.",
+  "analysis": {
+    "story_key": "DEMO-203",
+    "summary": "Shipping fee rules.",
+    "requirements": [],
+    "acceptance_criteria": [
+      {
+        "id": "AC-1",
+        "text": "Orders with a subtotal over 50 EUR ship for free.",
+        "source": "description"
+      },
+      {
+        "id": "AC-2",
+        "text": "Orders with a subtotal under 100 EUR pay a flat shipping fee of 4.99 EUR.",
+        "source": "description"
+      },
+      {
+        "id": "AC-3",
+        "text": "The shipping cost is shown in the cart summary before checkout.",
+        "source": "description"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F-1",
+        "kind": "question",
+        "text": "Which currency formats are supported?",
+        "related_ac_ids": []
+      }
+    ],
+    "risks": [
+      {
+        "id": "R-1",
+        "title": "Wrong shipping fee charged",
+        "description": "Fee rules may be implemented incorrectly.",
+        "category": "functional",
+        "likelihood": "medium",
+        "impact": "high",
+        "related_ac_ids": [
+          "AC-1",
+          "AC-2"
+        ]
+      }
+    ],
+    "assumptions": [],
+    "out_of_scope": []
+  },
+  "test_cases": [
+    {
+      "title": "Subtotal above both thresholds ships for free",
+      "objective": "Verify: Subtotal above both thresholds ships for free.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Open the cart with a subtotal of 120.00 EUR.",
+          "data": "120.00",
+          "expected_result": "The cart summary shows shipping 0.00 EUR."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-1",
+        "AC-3"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Cart"
+      ]
+    },
+    {
+      "title": "Subtotal below both thresholds pays 4.99 EUR shipping",
+      "objective": "Verify: Subtotal below both thresholds pays 4.99 EUR shipping.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Open the cart with a subtotal of 30.00 EUR.",
+          "data": "30.00",
+          "expected_result": "The cart summary shows shipping 4.99 EUR."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-2",
+        "AC-3"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Cart"
+      ]
+    },
+    {
+      "title": "Subtotal in the overlap range ships for free",
+      "objective": "Verify: Subtotal in the overlap range ships for free.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Open the cart with a subtotal of 75.00 EUR.",
+          "data": "75.00",
+          "expected_result": "The cart summary shows shipping 0.00 EUR."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-1",
+        "AC-2"
+      ],
+      "risk_ids": [
+        "R-1"
+      ],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Cart"
+      ]
+    },
+    {
+      "title": "Subtotal exactly at 50 EUR pays shipping",
+      "objective": "Verify: Subtotal exactly at 50 EUR pays shipping.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Open the cart with a subtotal of 50.00 EUR.",
+          "data": "50.00",
+          "expected_result": "The cart summary shows shipping 4.99 EUR."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "boundary_value",
+      "covers": [
+        "AC-1",
+        "AC-2"
+      ],
+      "risk_ids": [
+        "R-1"
+      ],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Cart"
+      ]
+    },
+    {
+      "title": "Non-positive subtotal shows no shipping fee",
+      "objective": "Verify: Non-positive subtotal shows no shipping fee.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Remove every product so the cart is empty.",
+          "expected_result": "The cart summary shows no shipping cost line."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-3"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Cart"
+      ]
+    }
+  ],
+  "expected_failed_checks": [
+    "expected_findings",
+    "expected_blocked",
+    "export_readiness"
+  ]
+}

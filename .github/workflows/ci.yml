@@ -50,6 +50,9 @@ jobs:
       - name: Pytest
         run: uv run pytest --cov --cov-report=term-missing
 
+      - name: Evals
+        run: uv run python -m evals
+
   secrets:
     name: Secret scan
     runs-on: ubuntu-latest

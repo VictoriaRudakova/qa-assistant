@@ -1,0 +1,108 @@
+{
+  "id": "promotion_cloning_cross_domain",
+  "title": "Promotion cloning across Bonus Engine and CRM",
+  "domain": "bonus engine + crm",
+  "measures": [
+    "AC preservation across domains",
+    "state transitions of source and clone",
+    "gap in copy scope raised and blocked, rest ready"
+  ],
+  "checks": [
+    "expected_findings",
+    "ready_acs",
+    "expected_blocked",
+    "applicable_techniques"
+  ],
+  "story": {
+    "key": "DEMO-212",
+    "url": "https://jira.example.com/browse/DEMO-212",
+    "summary": "Promotion manager clones an existing promotion",
+    "issue_type": "Story",
+    "status": "Ready for QA",
+    "priority": "Medium",
+    "labels": [
+      "bonus",
+      "crm",
+      "promotions"
+    ],
+    "components": [
+      "Bonus Engine",
+      "CRM"
+    ],
+    "description": "As a promotion manager I want to clone a promotion so that I can reuse its reward set-up. Promotions can be linked to CRM campaigns that advertise them.\n\n## Acceptance Criteria\n- Cloning a promotion creates a new promotion in Draft status with a new id.\n- The clone copies the reward configuration, including all tiers, of the source promotion.\n- The clone does not copy the start and end dates; both are empty in the clone.\n- The clone is not linked to any CRM campaign of the source promotion.\n- Cloning an archived promotion is allowed; cloning a deleted promotion is rejected.",
+    "acceptance_criteria": [
+      {
+        "id": "AC-1",
+        "text": "Cloning a promotion creates a new promotion in Draft status with a new id.",
+        "source": "description"
+      },
+      {
+        "id": "AC-2",
+        "text": "The clone copies the reward configuration, including all tiers, of the source promotion.",
+        "source": "description"
+      },
+      {
+        "id": "AC-3",
+        "text": "The clone does not copy the start and end dates; both are empty in the clone.",
+        "source": "description"
+      },
+      {
+        "id": "AC-4",
+        "text": "The clone is not linked to any CRM campaign of the source promotion.",
+        "source": "description"
+      },
+      {
+        "id": "AC-5",
+        "text": "Cloning an archived promotion is allowed; cloning a deleted promotion is rejected.",
+        "source": "description"
+      }
+    ],
+    "links": [],
+    "subtasks": [],
+    "comments": [],
+    "fetched_at": "2026-10-01T09:00:00Z"
+  },
+  "reference": {
+    "expected_findings": [
+      {
+        "kinds": [
+          "missing_requirement",
+          "question",
+          "ambiguity"
+        ],
+        "related_ac_ids": [
+          "AC-2"
+        ],
+        "why": "AC-2 names reward configuration only; eligibility is not mentioned"
+      }
+    ],
+    "ready_acs": "all",
+    "expected_blocked": [
+      {
+        "kinds": [
+          "missing_requirement",
+          "question",
+          "ambiguity"
+        ],
+        "related_ac_ids": [
+          "AC-2"
+        ],
+        "why": "whether eligibility is copied decides the expectation"
+      }
+    ],
+    "applicable_techniques": [
+      {
+        "technique": "state_transition",
+        "ac_ids": [
+          "AC-1",
+          "AC-5"
+        ],
+        "why": "status of the clone and allowed source states"
+      }
+    ],
+    "known_risks": [
+      "clone advertised by a running campaign",
+      "partial tier copy"
+    ]
+  }
+}

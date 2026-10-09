@@ -1,0 +1,259 @@
+{
+  "description": "Fully specified behaviour: every case ready; open questions stay with the PO.",
+  "analysis": {
+    "story_key": "DEMO-211",
+    "summary": "Fixed free-spin reward without tiers, country eligibility and a single claim per player.",
+    "requirements": [],
+    "acceptance_criteria": [
+      {
+        "id": "AC-1",
+        "text": "A tierless promotion grants a fixed reward of 10 to 100 free spins to every eligible player.",
+        "source": "description"
+      },
+      {
+        "id": "AC-2",
+        "text": "A tierless promotion has no tier configuration; the tier section is not shown in the promotion editor.",
+        "source": "description"
+      },
+      {
+        "id": "AC-3",
+        "text": "Only players whose account country is in the promotion's country list are eligible.",
+        "source": "description"
+      },
+      {
+        "id": "AC-4",
+        "text": "Each eligible player can claim the reward once per promotion.",
+        "source": "description"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F-1",
+        "kind": "missing_requirement",
+        "text": "What does a second claim attempt show: an error, a hidden claim button or nothing?",
+        "related_ac_ids": [
+          "AC-4"
+        ]
+      },
+      {
+        "id": "F-2",
+        "kind": "question",
+        "text": "Is the account country the registration country or the current login location?",
+        "related_ac_ids": [
+          "AC-3"
+        ]
+      },
+      {
+        "id": "F-3",
+        "kind": "question",
+        "text": "Should ended promotions appear in the player's promotion history?",
+        "related_ac_ids": []
+      }
+    ],
+    "risks": [
+      {
+        "id": "R-1",
+        "title": "Reward claimed twice",
+        "description": "Repeated or parallel claims credit the spins more than once.",
+        "category": "functional",
+        "likelihood": "medium",
+        "impact": "high",
+        "related_ac_ids": [
+          "AC-4"
+        ]
+      },
+      {
+        "id": "R-2",
+        "title": "Ineligible country rewarded",
+        "description": "Players outside the country list receive spins, breaching market rules.",
+        "category": "regulatory",
+        "likelihood": "medium",
+        "impact": "high",
+        "related_ac_ids": [
+          "AC-3"
+        ]
+      }
+    ],
+    "assumptions": [],
+    "out_of_scope": []
+  },
+  "test_cases": [
+    {
+      "title": "Rewards of 10 and 100 free spins are accepted",
+      "objective": "AC-1 boundaries of the reward.",
+      "preconditions": [
+        "A promotion manager is signed in to the promotion editor"
+      ],
+      "steps": [
+        {
+          "action": "Create a tierless promotion with a reward of 10 free spins and save.",
+          "expected_result": "The promotion is saved with a reward of 10 free spins."
+        },
+        {
+          "action": "Change the reward to 100 free spins and save.",
+          "expected_result": "The promotion is saved with a reward of 100 free spins."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "boundary_value",
+      "covers": [
+        "AC-1"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Bonus Engine"
+      ]
+    },
+    {
+      "title": "Rewards of 9 and 101 free spins are never stored",
+      "objective": "AC-1 just outside the range.",
+      "preconditions": [
+        "A promotion manager is signed in to the promotion editor"
+      ],
+      "steps": [
+        {
+          "action": "Set the reward to 9 free spins and save.",
+          "expected_result": "The reward 9 is not stored; the promotion keeps its previous reward."
+        },
+        {
+          "action": "Set the reward to 101 free spins and save.",
+          "expected_result": "The reward 101 is not stored; the promotion keeps its previous reward."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-1"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Bonus Engine"
+      ]
+    },
+    {
+      "title": "The editor shows no tier section for a tierless promotion",
+      "objective": "AC-2.",
+      "preconditions": [
+        "A promotion manager is signed in to the promotion editor"
+      ],
+      "steps": [
+        {
+          "action": "Open the editor of a tierless promotion.",
+          "expected_result": "No tier section is displayed in the editor."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-2"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Bonus Engine"
+      ]
+    },
+    {
+      "title": "A player from a listed country can claim the reward",
+      "objective": "AC-3 valid partition; registration and login country are the same (F-2 not involved).",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "As a player registered and logged in from country DE, claim a promotion whose country list is DE, AT.",
+          "expected_result": "20 free spins are credited to the player."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "equivalence_partitioning",
+      "covers": [
+        "AC-3",
+        "AC-4"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Bonus Engine"
+      ]
+    },
+    {
+      "title": "A player from an unlisted country receives no reward",
+      "objective": "AC-3 invalid partition.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "As a player registered and logged in from country FR, try to claim a promotion whose country list is DE, AT.",
+          "expected_result": "No free spins are credited to the player."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-3"
+      ],
+      "risk_ids": [
+        "R-2"
+      ],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Bonus Engine"
+      ]
+    },
+    {
+      "title": "A second claim credits no further spins",
+      "objective": "AC-4: whatever F-1 decides about the message, the balance does not change.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "As an eligible player who already claimed 20 free spins, claim again.",
+          "expected_result": "The free-spin balance stays at 20."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-4"
+      ],
+      "risk_ids": [
+        "R-1"
+      ],
+      "finding_ids": [
+        "F-1"
+      ],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Bonus Engine"
+      ]
+    }
+  ]
+}

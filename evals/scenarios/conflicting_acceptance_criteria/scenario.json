@@ -1,0 +1,78 @@
+{
+  "id": "conflicting_acceptance_criteria",
+  "title": "Story with conflicting acceptance criteria",
+  "domain": "e-commerce",
+  "measures": [
+    "conflict raised as an inconsistency finding",
+    "conflicted behaviour is clarification_required",
+    "export readiness"
+  ],
+  "checks": [
+    "expected_findings",
+    "expected_blocked",
+    "export_readiness"
+  ],
+  "story": {
+    "key": "DEMO-203",
+    "url": "https://jira.example.com/browse/DEMO-203",
+    "summary": "Shopper sees the shipping cost in the cart",
+    "issue_type": "Story",
+    "status": "Ready for QA",
+    "priority": "Medium",
+    "labels": [
+      "shop"
+    ],
+    "components": [
+      "Cart"
+    ],
+    "description": "As a shopper I want to know the shipping cost before checkout.\n\n## Acceptance Criteria\n- Orders with a subtotal over 50 EUR ship for free.\n- Orders with a subtotal under 100 EUR pay a flat shipping fee of 4.99 EUR.\n- The shipping cost is shown in the cart summary before checkout.",
+    "acceptance_criteria": [
+      {
+        "id": "AC-1",
+        "text": "Orders with a subtotal over 50 EUR ship for free.",
+        "source": "description"
+      },
+      {
+        "id": "AC-2",
+        "text": "Orders with a subtotal under 100 EUR pay a flat shipping fee of 4.99 EUR.",
+        "source": "description"
+      },
+      {
+        "id": "AC-3",
+        "text": "The shipping cost is shown in the cart summary before checkout.",
+        "source": "description"
+      }
+    ],
+    "links": [],
+    "subtasks": [],
+    "comments": [],
+    "fetched_at": "2026-10-01T09:00:00Z"
+  },
+  "reference": {
+    "expected_findings": [
+      {
+        "kinds": [
+          "inconsistency"
+        ],
+        "related_ac_ids": [
+          "AC-1",
+          "AC-2"
+        ],
+        "why": "AC-1 and AC-2 overlap for subtotals between 50 and 100 EUR"
+      }
+    ],
+    "expected_blocked": [
+      {
+        "kinds": [
+          "inconsistency"
+        ],
+        "related_ac_ids": [
+          "AC-1",
+          "AC-2"
+        ],
+        "why": "the fee in the overlap range is contradictory"
+      }
+    ],
+    "export_ready": false
+  }
+}

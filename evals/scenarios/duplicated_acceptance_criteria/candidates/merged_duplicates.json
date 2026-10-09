@@ -1,0 +1,56 @@
+{
+  "description": "Negative control: the analyst merges AC-3 into AC-1.",
+  "extends": "reference",
+  "expected_failed_checks": [
+    "analysis_accepted",
+    "ac_preserved"
+  ],
+  "analysis": {
+    "story_key": "DEMO-204",
+    "summary": "Stock badge and add-to-cart availability; AC-1 and AC-3 are word-for-word duplicates.",
+    "requirements": [],
+    "acceptance_criteria": [
+      {
+        "id": "AC-1",
+        "text": "The product page shows \"In stock\" when at least one unit is available.",
+        "source": "description"
+      },
+      {
+        "id": "AC-2",
+        "text": "The product page shows \"Out of stock\" when no units are available.",
+        "source": "description"
+      },
+      {
+        "id": "AC-4",
+        "text": "The \"Add to cart\" button is disabled when the product is out of stock.",
+        "source": "description"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F-2",
+        "kind": "question",
+        "text": "Is there a low-stock state between 'In stock' and 'Out of stock'?",
+        "related_ac_ids": [
+          "AC-1",
+          "AC-2"
+        ]
+      }
+    ],
+    "risks": [
+      {
+        "id": "R-1",
+        "title": "Out-of-stock product purchasable",
+        "description": "The button may stay enabled when stock reaches zero.",
+        "category": "functional",
+        "likelihood": "medium",
+        "impact": "high",
+        "related_ac_ids": [
+          "AC-4"
+        ]
+      }
+    ],
+    "assumptions": [],
+    "out_of_scope": []
+  }
+}

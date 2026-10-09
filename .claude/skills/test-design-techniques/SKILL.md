@@ -28,5 +28,12 @@ Map each test case to the `technique` value that produced it.
 - **Traceability:** `covers` lists only ACs the test truly verifies; `risk_ids` only risks
   it would detect.
 - **No duplication:** the same behavior with the same partition belongs in one test.
+- **No speculation:** findings are PO questions; they need a test only when they affect an
+  AC's expected outcome. Assert what the ACs determine (stored data, amounts, statuses,
+  responses) as a ready case, including edge states (last item, limit reached, empty
+  result); leave presentation details (empty-state text, formatting) to the PO with no
+  blocked case. Never invent thresholds, messages or UI the story does not describe. A
+  blocked case covers the AC its open question relates to; at most one per open question
+  and AC. Risk-driven cases that expect the AC's own outcome are not speculation.
 
 See [reference.md](reference.md) for a worked example and where the validator rules live.

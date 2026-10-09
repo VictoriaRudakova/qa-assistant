@@ -1,0 +1,72 @@
+{
+  "id": "shopping_cart_normal",
+  "title": "Normal shopping-cart story",
+  "domain": "e-commerce",
+  "measures": [
+    "authoritative AC preservation",
+    "every fully specified AC has a ready test",
+    "boundary values on a numeric range",
+    "no unjustified blocked tests"
+  ],
+  "checks": [
+    "ready_acs",
+    "applicable_techniques"
+  ],
+  "story": {
+    "key": "DEMO-201",
+    "url": "https://jira.example.com/browse/DEMO-201",
+    "summary": "Shopper manages items in the shopping cart",
+    "issue_type": "Story",
+    "status": "Ready for QA",
+    "priority": "Medium",
+    "labels": [
+      "shop"
+    ],
+    "components": [
+      "Cart"
+    ],
+    "description": "As a shopper I want to manage the items in my cart so that I buy exactly what I need.\n\n## Acceptance Criteria\n- Clicking \"Add to cart\" on an in-stock product adds one unit of it to the cart.\n- The quantity of a cart line can be changed to any whole number from 1 to 10.\n- Removing a cart line deletes it and updates the cart subtotal immediately.\n- The cart subtotal equals the sum of unit price multiplied by quantity for every line.",
+    "acceptance_criteria": [
+      {
+        "id": "AC-1",
+        "text": "Clicking \"Add to cart\" on an in-stock product adds one unit of it to the cart.",
+        "source": "description"
+      },
+      {
+        "id": "AC-2",
+        "text": "The quantity of a cart line can be changed to any whole number from 1 to 10.",
+        "source": "description"
+      },
+      {
+        "id": "AC-3",
+        "text": "Removing a cart line deletes it and updates the cart subtotal immediately.",
+        "source": "description"
+      },
+      {
+        "id": "AC-4",
+        "text": "The cart subtotal equals the sum of unit price multiplied by quantity for every line.",
+        "source": "description"
+      }
+    ],
+    "links": [],
+    "subtasks": [],
+    "comments": [],
+    "fetched_at": "2026-10-01T09:00:00Z"
+  },
+  "reference": {
+    "ready_acs": "all",
+    "applicable_techniques": [
+      {
+        "technique": "boundary_value",
+        "ac_ids": [
+          "AC-2"
+        ],
+        "why": "AC-2 defines the numeric range 1 to 10"
+      }
+    ],
+    "known_risks": [
+      "subtotal rounding",
+      "quantity limit enforced only in the UI"
+    ]
+  }
+}

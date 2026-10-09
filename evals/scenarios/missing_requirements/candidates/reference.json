@@ -1,0 +1,400 @@
+{
+  "description": "Designer leaves a 'TBD' expectation; the reviewer marks it clarification_required and adds an expiry case.",
+  "analysis": {
+    "story_key": "DEMO-202",
+    "summary": "Coupon entry at checkout; discount rules and validity rules are largely unspecified.",
+    "requirements": [],
+    "acceptance_criteria": [
+      {
+        "id": "AC-1",
+        "text": "A shopper can enter a coupon code on the checkout page.",
+        "source": "description"
+      },
+      {
+        "id": "AC-2",
+        "text": "A valid coupon reduces the order total.",
+        "source": "description"
+      },
+      {
+        "id": "AC-3",
+        "text": "An invalid coupon shows an error message.",
+        "source": "description"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F-1",
+        "kind": "missing_requirement",
+        "text": "The discount type and amount of a valid coupon are not specified.",
+        "related_ac_ids": [
+          "AC-2"
+        ]
+      },
+      {
+        "id": "F-2",
+        "kind": "missing_requirement",
+        "text": "What makes a coupon valid (expiry, minimum order, single use) is not specified.",
+        "related_ac_ids": [
+          "AC-2",
+          "AC-3"
+        ]
+      },
+      {
+        "id": "F-3",
+        "kind": "question",
+        "text": "Can more than one coupon be applied to the same order?",
+        "related_ac_ids": [
+          "AC-2"
+        ]
+      },
+      {
+        "id": "F-4",
+        "kind": "ambiguity",
+        "text": "The error message wording and placement for invalid coupons is not defined.",
+        "related_ac_ids": [
+          "AC-3"
+        ]
+      }
+    ],
+    "risks": [
+      {
+        "id": "R-1",
+        "title": "Discount applied twice",
+        "description": "Re-submitting a coupon could stack the discount.",
+        "category": "functional",
+        "likelihood": "medium",
+        "impact": "high",
+        "related_ac_ids": [
+          "AC-2"
+        ]
+      }
+    ],
+    "assumptions": [],
+    "out_of_scope": []
+  },
+  "test_cases": [
+    {
+      "title": "Coupon code field is available on checkout",
+      "objective": "Verify: Coupon code field is available on checkout.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Open the checkout page with one product in the cart.",
+          "expected_result": "A coupon code input and an Apply button are displayed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-1"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Checkout"
+      ]
+    },
+    {
+      "title": "Valid coupon lowers the order total",
+      "objective": "Verify: Valid coupon lowers the order total.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Apply coupon DEMO10 to an order totalling 50.00.",
+          "data": "DEMO10",
+          "expected_result": "The order total is lower than 50.00 and the coupon is shown as applied."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-2"
+      ],
+      "risk_ids": [
+        "R-1"
+      ],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Checkout"
+      ]
+    },
+    {
+      "title": "Valid coupon applies the configured discount amount",
+      "objective": "Verify: Valid coupon applies the configured discount amount.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Apply coupon DEMO10 to an order totalling 50.00.",
+          "data": "DEMO10",
+          "expected_result": "The order total is reduced by the discount amount TBD."
+        }
+      ],
+      "status": "ready",
+      "priority": "high",
+      "technique": "positive",
+      "covers": [
+        "AC-2"
+      ],
+      "risk_ids": [],
+      "finding_ids": [
+        "F-1"
+      ],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Checkout"
+      ]
+    },
+    {
+      "title": "Unknown coupon code shows an error",
+      "objective": "Verify: Unknown coupon code shows an error.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Apply coupon NOPE99 at checkout.",
+          "data": "NOPE99",
+          "expected_result": "An error message is shown next to the coupon field and the total is unchanged."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-3"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Checkout"
+      ]
+    },
+    {
+      "title": "Second coupon on the same order",
+      "objective": "Assumes one coupon per order (F-3 unanswered).",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Apply DEMO10, then apply DEMO20.",
+          "data": "DEMO10, DEMO20",
+          "expected_result": "Only DEMO10 stays applied and an error explains that one coupon is allowed."
+        }
+      ],
+      "status": "clarification_required",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-2"
+      ],
+      "risk_ids": [
+        "R-1"
+      ],
+      "finding_ids": [
+        "F-3"
+      ],
+      "open_question_ids": [
+        "F-3"
+      ],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Checkout"
+      ]
+    }
+  ],
+  "reviewed_test_cases": [
+    {
+      "title": "Coupon code field is available on checkout",
+      "objective": "Verify: Coupon code field is available on checkout.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Open the checkout page with one product in the cart.",
+          "expected_result": "A coupon code input and an Apply button are displayed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-1"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Checkout"
+      ]
+    },
+    {
+      "title": "Valid coupon lowers the order total",
+      "objective": "Verify: Valid coupon lowers the order total.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Apply coupon DEMO10 to an order totalling 50.00.",
+          "data": "DEMO10",
+          "expected_result": "The order total is lower than 50.00 and the coupon is shown as applied."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-2"
+      ],
+      "risk_ids": [
+        "R-1"
+      ],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Checkout"
+      ]
+    },
+    {
+      "title": "Valid coupon applies the configured discount amount",
+      "objective": "Assumes DEMO10 gives 10 percent off (F-1 unanswered).",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Apply coupon DEMO10 to an order totalling 50.00.",
+          "data": "DEMO10",
+          "expected_result": "The order total is 45.00 (10 percent off)."
+        }
+      ],
+      "status": "clarification_required",
+      "priority": "high",
+      "technique": "positive",
+      "covers": [
+        "AC-2"
+      ],
+      "risk_ids": [],
+      "finding_ids": [
+        "F-1"
+      ],
+      "open_question_ids": [
+        "F-1"
+      ],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Checkout"
+      ]
+    },
+    {
+      "title": "Unknown coupon code shows an error",
+      "objective": "Verify: Unknown coupon code shows an error.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Apply coupon NOPE99 at checkout.",
+          "data": "NOPE99",
+          "expected_result": "An error message is shown next to the coupon field and the total is unchanged."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-3"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Checkout"
+      ]
+    },
+    {
+      "title": "Second coupon on the same order",
+      "objective": "Assumes one coupon per order (F-3 unanswered).",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Apply DEMO10, then apply DEMO20.",
+          "data": "DEMO10, DEMO20",
+          "expected_result": "Only DEMO10 stays applied and an error explains that one coupon is allowed."
+        }
+      ],
+      "status": "clarification_required",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-2"
+      ],
+      "risk_ids": [
+        "R-1"
+      ],
+      "finding_ids": [
+        "F-3"
+      ],
+      "open_question_ids": [
+        "F-3"
+      ],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Checkout"
+      ]
+    },
+    {
+      "title": "Expired coupon is rejected",
+      "objective": "Assumes expired coupons are invalid (F-2 unanswered).",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Apply coupon OLD5 that expired yesterday.",
+          "data": "OLD5",
+          "expected_result": "An error message is shown and the total is unchanged."
+        }
+      ],
+      "status": "clarification_required",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-3"
+      ],
+      "risk_ids": [],
+      "finding_ids": [
+        "F-2"
+      ],
+      "open_question_ids": [
+        "F-2"
+      ],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Checkout"
+      ]
+    }
+  ]
+}

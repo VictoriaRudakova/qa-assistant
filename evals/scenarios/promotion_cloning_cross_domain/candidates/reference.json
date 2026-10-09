@@ -1,0 +1,319 @@
+{
+  "description": "Every AC has a ready case; eligibility copying waits on F-1.",
+  "analysis": {
+    "story_key": "DEMO-212",
+    "summary": "Clone creates a Draft copy of the reward set-up without dates or CRM links. Eligibility rules are not mentioned; CRM-side visibility of the clone is unclear.",
+    "requirements": [],
+    "acceptance_criteria": [
+      {
+        "id": "AC-1",
+        "text": "Cloning a promotion creates a new promotion in Draft status with a new id.",
+        "source": "description"
+      },
+      {
+        "id": "AC-2",
+        "text": "The clone copies the reward configuration, including all tiers, of the source promotion.",
+        "source": "description"
+      },
+      {
+        "id": "AC-3",
+        "text": "The clone does not copy the start and end dates; both are empty in the clone.",
+        "source": "description"
+      },
+      {
+        "id": "AC-4",
+        "text": "The clone is not linked to any CRM campaign of the source promotion.",
+        "source": "description"
+      },
+      {
+        "id": "AC-5",
+        "text": "Cloning an archived promotion is allowed; cloning a deleted promotion is rejected.",
+        "source": "description"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F-1",
+        "kind": "missing_requirement",
+        "text": "Are the eligibility rules (country list, player segments) copied? AC-2 only names the reward configuration.",
+        "related_ac_ids": [
+          "AC-2"
+        ]
+      },
+      {
+        "id": "F-2",
+        "kind": "ambiguity",
+        "text": "Does the CRM side see the clone at all before it is linked manually?",
+        "related_ac_ids": [
+          "AC-4"
+        ]
+      },
+      {
+        "id": "F-3",
+        "kind": "question",
+        "text": "What name does the clone get and must names be unique?",
+        "related_ac_ids": [
+          "AC-1"
+        ]
+      }
+    ],
+    "risks": [
+      {
+        "id": "R-1",
+        "title": "Clone triggers live CRM communication",
+        "description": "A clone still linked to a running campaign could be advertised before it is configured.",
+        "category": "integration",
+        "likelihood": "medium",
+        "impact": "high",
+        "related_ac_ids": [
+          "AC-4"
+        ]
+      },
+      {
+        "id": "R-2",
+        "title": "Clone activates with old dates",
+        "description": "Copied dates could start the clone immediately.",
+        "category": "functional",
+        "likelihood": "low",
+        "impact": "high",
+        "related_ac_ids": [
+          "AC-3"
+        ]
+      },
+      {
+        "id": "R-3",
+        "title": "Tiers partially copied",
+        "description": "Tier thresholds or percentages are lost on cloning.",
+        "category": "data",
+        "likelihood": "medium",
+        "impact": "medium",
+        "related_ac_ids": [
+          "AC-2"
+        ]
+      }
+    ],
+    "assumptions": [],
+    "out_of_scope": []
+  },
+  "test_cases": [
+    {
+      "title": "Clone of an active promotion is a Draft with a new id",
+      "objective": "AC-1 state of the clone.",
+      "preconditions": [
+        "A promotion manager is signed in",
+        "Promotion PROMO-A is Active, has 3 tiers (10/50%, 20/100%, 30/150%), dates 2026-11-01 to 2026-11-30 and is linked to CRM campaign 'Autumn reload'"
+      ],
+      "steps": [
+        {
+          "action": "Clone PROMO-A.",
+          "expected_result": "A new promotion exists with an id different from PROMO-A and status Draft; PROMO-A stays Active."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-1"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Bonus Engine"
+      ]
+    },
+    {
+      "title": "Clone copies all tiers with thresholds and percentages",
+      "objective": "AC-2.",
+      "preconditions": [
+        "A promotion manager is signed in",
+        "Promotion PROMO-A is Active, has 3 tiers (10/50%, 20/100%, 30/150%), dates 2026-11-01 to 2026-11-30 and is linked to CRM campaign 'Autumn reload'"
+      ],
+      "steps": [
+        {
+          "action": "Clone PROMO-A and open the clone's tiers.",
+          "expected_result": "The clone has 3 tiers: 10/50%, 20/100%, 30/150%."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-2"
+      ],
+      "risk_ids": [
+        "R-3"
+      ],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Bonus Engine"
+      ]
+    },
+    {
+      "title": "Clone copies the eligibility rules of the source",
+      "objective": "AC-2 scope: depends on F-1 (are eligibility rules part of the copy?).",
+      "preconditions": [
+        "A promotion manager is signed in",
+        "Promotion PROMO-A is Active, has 3 tiers (10/50%, 20/100%, 30/150%), dates 2026-11-01 to 2026-11-30 and is linked to CRM campaign 'Autumn reload'"
+      ],
+      "steps": [
+        {
+          "action": "Clone PROMO-A whose country list is DE, AT and open the clone's eligibility.",
+          "expected_result": "The eligibility matches the PO answer to F-1."
+        }
+      ],
+      "status": "clarification_required",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-2"
+      ],
+      "risk_ids": [],
+      "finding_ids": [
+        "F-1"
+      ],
+      "open_question_ids": [
+        "F-1"
+      ],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Bonus Engine"
+      ]
+    },
+    {
+      "title": "Clone has empty start and end dates",
+      "objective": "AC-3.",
+      "preconditions": [
+        "A promotion manager is signed in",
+        "Promotion PROMO-A is Active, has 3 tiers (10/50%, 20/100%, 30/150%), dates 2026-11-01 to 2026-11-30 and is linked to CRM campaign 'Autumn reload'"
+      ],
+      "steps": [
+        {
+          "action": "Clone PROMO-A and open the clone's schedule.",
+          "expected_result": "Start date and end date are both empty."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-3"
+      ],
+      "risk_ids": [
+        "R-2"
+      ],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Bonus Engine"
+      ]
+    },
+    {
+      "title": "Clone is not linked to the source's CRM campaign",
+      "objective": "AC-4: holds regardless of F-2 (CRM visibility).",
+      "preconditions": [
+        "A promotion manager is signed in",
+        "Promotion PROMO-A is Active, has 3 tiers (10/50%, 20/100%, 30/150%), dates 2026-11-01 to 2026-11-30 and is linked to CRM campaign 'Autumn reload'"
+      ],
+      "steps": [
+        {
+          "action": "Clone PROMO-A and open the clone's linked campaigns.",
+          "expected_result": "The clone has no linked CRM campaign."
+        },
+        {
+          "action": "Open PROMO-A's linked campaigns.",
+          "expected_result": "PROMO-A is still linked to 'Autumn reload'."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-4"
+      ],
+      "risk_ids": [
+        "R-1"
+      ],
+      "finding_ids": [
+        "F-2"
+      ],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "CRM"
+      ]
+    },
+    {
+      "title": "An archived promotion can be cloned",
+      "objective": "AC-5 allowed source state.",
+      "preconditions": [
+        "A promotion manager is signed in",
+        "Promotion PROMO-A is Active, has 3 tiers (10/50%, 20/100%, 30/150%), dates 2026-11-01 to 2026-11-30 and is linked to CRM campaign 'Autumn reload'"
+      ],
+      "steps": [
+        {
+          "action": "Archive a copy of PROMO-A, then clone the archived promotion.",
+          "expected_result": "A new Draft promotion is created."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-5"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Bonus Engine"
+      ]
+    },
+    {
+      "title": "Cloning a deleted promotion is rejected",
+      "objective": "AC-5 rejected source state.",
+      "preconditions": [
+        "A promotion manager is signed in",
+        "Promotion PROMO-A is Active, has 3 tiers (10/50%, 20/100%, 30/150%), dates 2026-11-01 to 2026-11-30 and is linked to CRM campaign 'Autumn reload'"
+      ],
+      "steps": [
+        {
+          "action": "Delete promotion PROMO-B, then request a clone of PROMO-B.",
+          "expected_result": "The clone is rejected and no new promotion is created."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-5"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Bonus Engine"
+      ]
+    }
+  ]
+}

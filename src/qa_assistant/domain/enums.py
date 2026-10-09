@@ -54,9 +54,23 @@ class FindingKind(StrEnum):
 
 
 class AcceptanceCriterionSource(StrEnum):
+    """Where Jira holds the criterion. There is deliberately no "inferred" source: only
+    acceptance criteria fetched from Jira are authoritative. Gaps the analyst finds are
+    findings, never acceptance criteria."""
+
     FIELD = "field"
     DESCRIPTION = "description"
-    INFERRED = "inferred"
+
+
+class Readiness(StrEnum):
+    """Whether a test case's expected behaviour is known.
+
+    ``clarification_required`` cases depend on an unanswered product question; they are
+    kept for traceability but never pass export validation and are never exported.
+    """
+
+    READY = "ready"
+    CLARIFICATION_REQUIRED = "clarification_required"
 
 
 class Severity(StrEnum):

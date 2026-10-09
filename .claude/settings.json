@@ -9,11 +9,17 @@
       "mcp__qa-assistant__submit_test_cases",
       "mcp__qa-assistant__validate_test_cases",
       "mcp__qa-assistant__get_run",
+      "mcp__qa-assistant__get_story_analysis",
+      "mcp__qa-assistant__list_test_cases",
+      "mcp__qa-assistant__get_test_cases",
+      "mcp__qa-assistant__get_coverage",
       "mcp__qa-assistant__list_runs",
       "Bash(uv run pytest:*)",
       "Bash(uv run ruff check:*)",
       "Bash(uv run ruff format:*)",
-      "Bash(uv run mypy:*)"
+      "Bash(uv run mypy:*)",
+      "Bash(uv run python -m evals:*)",
+      "Bash(scripts/verify.sh)"
     ],
     "deny": [
       "Read(./.env)",
@@ -25,6 +31,43 @@
       "Bash(printenv:*)",
       "Bash(env)",
       "Bash(git push:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Read|Edit|Write|MultiEdit|NotebookEdit|Grep|WebFetch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/hooks/guard.py\" pre-tool",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/hooks/guard.py\" post-edit",
+            "timeout": 60
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/hooks/guard.py\" stop",
+            "timeout": 600
+          }
+        ]
+      }
     ]
   }
 }

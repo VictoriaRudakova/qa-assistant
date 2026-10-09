@@ -1,0 +1,72 @@
+{
+  "id": "duplicated_acceptance_criteria",
+  "title": "Story with duplicated acceptance criteria",
+  "domain": "e-commerce",
+  "measures": [
+    "duplicates kept as separate ACs (no merge)",
+    "duplication raised as a finding",
+    "AC coverage"
+  ],
+  "checks": [
+    "expected_findings",
+    "ready_acs"
+  ],
+  "story": {
+    "key": "DEMO-204",
+    "url": "https://jira.example.com/browse/DEMO-204",
+    "summary": "Shopper sees stock availability on the product page",
+    "issue_type": "Story",
+    "status": "Ready for QA",
+    "priority": "Medium",
+    "labels": [
+      "shop"
+    ],
+    "components": [
+      "Catalogue"
+    ],
+    "description": "As a shopper I want to see whether a product is available before adding it.\n\n## Acceptance Criteria\n- The product page shows \"In stock\" when at least one unit is available.\n- The product page shows \"Out of stock\" when no units are available.\n- The product page shows \"In stock\" when at least one unit is available.\n- The \"Add to cart\" button is disabled when the product is out of stock.",
+    "acceptance_criteria": [
+      {
+        "id": "AC-1",
+        "text": "The product page shows \"In stock\" when at least one unit is available.",
+        "source": "description"
+      },
+      {
+        "id": "AC-2",
+        "text": "The product page shows \"Out of stock\" when no units are available.",
+        "source": "description"
+      },
+      {
+        "id": "AC-3",
+        "text": "The product page shows \"In stock\" when at least one unit is available.",
+        "source": "description"
+      },
+      {
+        "id": "AC-4",
+        "text": "The \"Add to cart\" button is disabled when the product is out of stock.",
+        "source": "description"
+      }
+    ],
+    "links": [],
+    "subtasks": [],
+    "comments": [],
+    "fetched_at": "2026-10-01T09:00:00Z"
+  },
+  "reference": {
+    "expected_findings": [
+      {
+        "kinds": [
+          "inconsistency",
+          "ambiguity",
+          "question"
+        ],
+        "related_ac_ids": [
+          "AC-1",
+          "AC-3"
+        ],
+        "why": "AC-1 and AC-3 have the same text"
+      }
+    ],
+    "ready_acs": "all"
+  }
+}

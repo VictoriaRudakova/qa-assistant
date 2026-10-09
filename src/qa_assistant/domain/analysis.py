@@ -57,8 +57,11 @@ class StoryAnalysis(DomainModel):
     summary: NonEmptyStr = Field(description="One-paragraph QA-oriented summary of the story")
     requirements: list[NonEmptyStr] = Field(default_factory=list)
     acceptance_criteria: list[AcceptanceCriterion] = Field(
-        min_length=1,
-        description="Normalized ACs: those from Jira plus any inferred ones (source='inferred')",
+        default_factory=list,
+        description=(
+            "Exactly the acceptance criteria fetched from Jira (same ids). Never add criteria: "
+            "record gaps and missing behaviour as findings instead."
+        ),
     )
     findings: list[Finding] = Field(default_factory=list)
     risks: list[Risk] = Field(default_factory=list)
@@ -85,3 +88,7 @@ class StoryAnalysis(DomainModel):
     @property
     def risk_ids(self) -> set[str]:
         return {r.id for r in self.risks}
+
+    @property
+    def finding_ids(self) -> set[str]:
+        return {f.id for f in self.findings}

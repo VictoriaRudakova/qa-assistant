@@ -1,7 +1,8 @@
 """Guards that test fixtures stay synthetic.
 
-Fixtures must never contain real company data: only the DEMO project, example.com
-addresses/hosts and no token-like strings. If this fails, anonymize the fixture.
+Fixtures (tests/fixtures and evals/scenarios) must never contain real company data: only
+the DEMO project, example.com addresses/hosts and no token-like strings. If this fails,
+anonymize the fixture.
 """
 
 from __future__ import annotations
@@ -13,7 +14,10 @@ import pytest
 
 from tests.support import FIXTURES
 
-FIXTURE_FILES = sorted(p for p in FIXTURES.rglob("*") if p.is_file())
+EVAL_SCENARIOS = Path(__file__).resolve().parents[2] / "evals" / "scenarios"
+FIXTURE_FILES = sorted(
+    p for root in (FIXTURES, EVAL_SCENARIOS) for p in root.rglob("*") if p.is_file()
+)
 
 EMAIL_RE = re.compile(r"[\w.+-]+@([\w-]+(?:\.[\w-]+)+)")
 URL_HOST_RE = re.compile(r"https?://([^/\s\"']+)")
@@ -31,7 +35,7 @@ def test_fixtures_exist() -> None:
     assert FIXTURE_FILES
 
 
-@pytest.mark.parametrize("path", FIXTURE_FILES, ids=lambda p: str(p.relative_to(FIXTURES)))
+@pytest.mark.parametrize("path", FIXTURE_FILES, ids=lambda p: "/".join(p.parts[-3:]))
 def test_fixture_is_synthetic(path: Path) -> None:
     text = path.read_text(encoding="utf-8")
     for domain in EMAIL_RE.findall(text) + URL_HOST_RE.findall(text):

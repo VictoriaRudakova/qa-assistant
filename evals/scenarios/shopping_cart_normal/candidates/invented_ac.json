@@ -1,0 +1,86 @@
+{
+  "description": "Negative control: the analyst adds an AC for a gap (cart persistence).",
+  "extends": "reference",
+  "expected_failed_checks": [
+    "analysis_accepted",
+    "ac_preserved"
+  ],
+  "analysis": {
+    "story_key": "DEMO-201",
+    "summary": "Cart line management: add, change quantity within 1-10, remove, and subtotal maths.",
+    "requirements": [],
+    "acceptance_criteria": [
+      {
+        "id": "AC-1",
+        "text": "Clicking \"Add to cart\" on an in-stock product adds one unit of it to the cart.",
+        "source": "description"
+      },
+      {
+        "id": "AC-2",
+        "text": "The quantity of a cart line can be changed to any whole number from 1 to 10.",
+        "source": "description"
+      },
+      {
+        "id": "AC-3",
+        "text": "Removing a cart line deletes it and updates the cart subtotal immediately.",
+        "source": "description"
+      },
+      {
+        "id": "AC-4",
+        "text": "The cart subtotal equals the sum of unit price multiplied by quantity for every line.",
+        "source": "description"
+      },
+      {
+        "id": "AC-5",
+        "text": "Cart contents persist after the shopper signs out.",
+        "source": "description"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F-1",
+        "kind": "question",
+        "text": "Does adding a product that is already in the cart create a second line or increase the quantity?",
+        "related_ac_ids": [
+          "AC-1"
+        ]
+      },
+      {
+        "id": "F-2",
+        "kind": "missing_requirement",
+        "text": "Behaviour when adding an out-of-stock product is not specified.",
+        "related_ac_ids": [
+          "AC-1"
+        ]
+      }
+    ],
+    "risks": [
+      {
+        "id": "R-1",
+        "title": "Subtotal rounding error",
+        "description": "Decimal prices multiplied by quantity may be rounded incorrectly.",
+        "category": "functional",
+        "likelihood": "medium",
+        "impact": "high",
+        "related_ac_ids": [
+          "AC-4"
+        ]
+      },
+      {
+        "id": "R-2",
+        "title": "Invalid quantity accepted",
+        "description": "Out-of-range quantities could reach the order.",
+        "category": "data",
+        "likelihood": "medium",
+        "impact": "medium",
+        "related_ac_ids": [
+          "AC-2"
+        ]
+      }
+    ],
+    "assumptions": [
+      "Prices are shown in EUR with two decimals."
+    ],
+    "out_of_scope": []
+  }
+}

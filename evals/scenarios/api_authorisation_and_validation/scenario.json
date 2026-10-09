@@ -1,0 +1,114 @@
+{
+  "id": "api_authorisation_and_validation",
+  "title": "API authorisation, validation and state-dependent updates",
+  "domain": "backend api",
+  "measures": [
+    "permission and authentication negatives",
+    "length boundaries",
+    "status-dependent behaviour",
+    "observable results and redundancy"
+  ],
+  "checks": [
+    "expected_findings",
+    "ready_acs",
+    "expected_blocked",
+    "applicable_techniques"
+  ],
+  "story": {
+    "key": "DEMO-214",
+    "url": "https://jira.example.com/browse/DEMO-214",
+    "summary": "Promotions API: update a promotion's name",
+    "issue_type": "Story",
+    "status": "Ready for QA",
+    "priority": "Medium",
+    "labels": [
+      "api"
+    ],
+    "components": [
+      "Promotions API"
+    ],
+    "description": "As an integrator I want to rename promotions through the API with proper authorisation and validation.\n\n## Acceptance Criteria\n- PATCH /api/promotions/{id} requires the role promotion_editor; callers without it receive HTTP 403 and the promotion is unchanged.\n- Unauthenticated requests receive HTTP 401.\n- The field name is required and must be 3 to 80 characters long; violations return HTTP 422 with the field name in the error body.\n- Only promotions in Draft or Scheduled status can be updated; updating an Active or Ended promotion returns HTTP 409.\n- A request for a promotion id that does not exist returns HTTP 404.",
+    "acceptance_criteria": [
+      {
+        "id": "AC-1",
+        "text": "PATCH /api/promotions/{id} requires the role promotion_editor; callers without it receive HTTP 403 and the promotion is unchanged.",
+        "source": "description"
+      },
+      {
+        "id": "AC-2",
+        "text": "Unauthenticated requests receive HTTP 401.",
+        "source": "description"
+      },
+      {
+        "id": "AC-3",
+        "text": "The field name is required and must be 3 to 80 characters long; violations return HTTP 422 with the field name in the error body.",
+        "source": "description"
+      },
+      {
+        "id": "AC-4",
+        "text": "Only promotions in Draft or Scheduled status can be updated; updating an Active or Ended promotion returns HTTP 409.",
+        "source": "description"
+      },
+      {
+        "id": "AC-5",
+        "text": "A request for a promotion id that does not exist returns HTTP 404.",
+        "source": "description"
+      }
+    ],
+    "links": [],
+    "subtasks": [],
+    "comments": [],
+    "fetched_at": "2026-10-01T09:00:00Z"
+  },
+  "reference": {
+    "expected_findings": [
+      {
+        "kinds": [
+          "ambiguity",
+          "inconsistency",
+          "question"
+        ],
+        "related_ac_ids": [
+          "AC-1",
+          "AC-5"
+        ],
+        "why": "AC-1 and AC-5 both apply to an unauthorised caller and an unknown id"
+      }
+    ],
+    "ready_acs": "all",
+    "expected_blocked": [
+      {
+        "kinds": [
+          "ambiguity",
+          "inconsistency",
+          "question"
+        ],
+        "related_ac_ids": [
+          "AC-1",
+          "AC-5"
+        ],
+        "why": "the status code in the overlap is undecided"
+      }
+    ],
+    "applicable_techniques": [
+      {
+        "technique": "boundary_value",
+        "ac_ids": [
+          "AC-3"
+        ],
+        "why": "3 to 80 characters"
+      },
+      {
+        "technique": "state_transition",
+        "ac_ids": [
+          "AC-4"
+        ],
+        "why": "updates depend on promotion status"
+      }
+    ],
+    "known_risks": [
+      "privilege escalation",
+      "existence disclosure via 403/404"
+    ]
+  }
+}

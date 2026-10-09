@@ -1,0 +1,86 @@
+{
+  "id": "tierless_promotion",
+  "title": "Tierless free-spins promotion",
+  "domain": "bonus engine",
+  "measures": [
+    "fully specified story needs no blocked cases",
+    "answer-independent ready case for an open question",
+    "no speculative blocked cases"
+  ],
+  "checks": [
+    "expected_findings",
+    "ready_acs",
+    "applicable_techniques"
+  ],
+  "story": {
+    "key": "DEMO-211",
+    "url": "https://jira.example.com/browse/DEMO-211",
+    "summary": "Promotion manager creates a tierless free-spins promotion",
+    "issue_type": "Story",
+    "status": "Ready for QA",
+    "priority": "Medium",
+    "labels": [
+      "bonus",
+      "promotions"
+    ],
+    "components": [
+      "Bonus Engine"
+    ],
+    "description": "As a promotion manager I want a simple promotion without tiers that grants the same reward to every eligible player.\n\n## Acceptance Criteria\n- A tierless promotion grants a fixed reward of 10 to 100 free spins to every eligible player.\n- A tierless promotion has no tier configuration; the tier section is not shown in the promotion editor.\n- Only players whose account country is in the promotion's country list are eligible.\n- Each eligible player can claim the reward once per promotion.",
+    "acceptance_criteria": [
+      {
+        "id": "AC-1",
+        "text": "A tierless promotion grants a fixed reward of 10 to 100 free spins to every eligible player.",
+        "source": "description"
+      },
+      {
+        "id": "AC-2",
+        "text": "A tierless promotion has no tier configuration; the tier section is not shown in the promotion editor.",
+        "source": "description"
+      },
+      {
+        "id": "AC-3",
+        "text": "Only players whose account country is in the promotion's country list are eligible.",
+        "source": "description"
+      },
+      {
+        "id": "AC-4",
+        "text": "Each eligible player can claim the reward once per promotion.",
+        "source": "description"
+      }
+    ],
+    "links": [],
+    "subtasks": [],
+    "comments": [],
+    "fetched_at": "2026-10-01T09:00:00Z"
+  },
+  "reference": {
+    "expected_findings": [
+      {
+        "kinds": [
+          "missing_requirement",
+          "question",
+          "ambiguity"
+        ],
+        "related_ac_ids": [
+          "AC-4"
+        ],
+        "why": "the response to a second claim is not specified"
+      }
+    ],
+    "ready_acs": "all",
+    "applicable_techniques": [
+      {
+        "technique": "boundary_value",
+        "ac_ids": [
+          "AC-1"
+        ],
+        "why": "AC-1 defines the range 10 to 100"
+      }
+    ],
+    "known_risks": [
+      "double claim",
+      "country eligibility bypass"
+    ]
+  }
+}

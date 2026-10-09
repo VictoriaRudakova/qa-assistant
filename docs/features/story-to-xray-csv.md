@@ -17,7 +17,24 @@ user checkpoint -> `export_xray_csv`.
    line, or `Acceptance criteria:`), split into bullets, numbered items, paragraphs or
    Gherkin scenarios. See `jira/acceptance_criteria.py`.
 
-ACs are numbered `AC-1..n`. The analyst may add inferred ACs (`source: inferred`).
+ACs are numbered `AC-1..n`. Only Jira ACs are authoritative: the analyst never adds ACs, and
+`submit_story_analysis` rejects an analysis whose AC ids differ from Jira's. Missing behaviour
+is recorded as a finding (gap or question) and tests that explore it reference it through
+`finding_ids`, reported separately from AC coverage.
+
+## Readiness
+
+A test case whose expected behaviour depends on an unanswered product question is
+`clarification_required` and names the findings in `open_question_ids`. Such cases are kept
+for traceability but block final export validation (`export_ready: false`) and are never
+exported. Ready cases may not contain undecided expected results ("either ... or",
+"record which", "TBD", "agreed with the PO", an `open-question-*` label):
+`TC_UNRESOLVED_EXPECTED_RESULT` is an error. A ready case that traces only to findings
+(no AC, no risk) asserts unspecified behaviour: `TC_READY_GAP_ONLY` is an error, so it blocks
+export until the case is `clarification_required` or traces to a Jira AC or risk.
+
+Guardrail placement, hooks and evals: `docs/architecture/harness.md`,
+`docs/features/evals.md`.
 
 ## CSV mapping (configuration)
 

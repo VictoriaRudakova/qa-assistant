@@ -1,0 +1,97 @@
+{
+  "description": "Negative control: blocked cases that do not depend on an open question about what they verify - one verifies no AC, one repeats another's open question for the same AC.",
+  "extends": "reference",
+  "expected_failed_checks": [
+    "clarification_justified"
+  ],
+  "append_test_cases": [
+    {
+      "title": "Re-adding a carted product merges into the existing line",
+      "objective": "Clarify F-1. Assumption: one line per product.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Click \"Add to cart\" on Demo Mug twice.",
+          "expected_result": "The cart has one Demo Mug line with quantity 2 (assumed answer to F-1)."
+        }
+      ],
+      "status": "clarification_required",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-1"
+      ],
+      "risk_ids": [],
+      "finding_ids": [
+        "F-1"
+      ],
+      "open_question_ids": [
+        "F-1"
+      ],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Cart"
+      ]
+    },
+    {
+      "title": "Rapid double-click on Add to cart adds two units to one line",
+      "objective": "Clarify F-1 again under double-click. Assumption: one line per product.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Double-click \"Add to cart\" on Demo Mug.",
+          "expected_result": "The cart has one Demo Mug line with quantity 2 (assumed answer to F-1)."
+        }
+      ],
+      "status": "clarification_required",
+      "priority": "medium",
+      "technique": "error_guessing",
+      "covers": [
+        "AC-1"
+      ],
+      "risk_ids": [],
+      "finding_ids": [
+        "F-1"
+      ],
+      "open_question_ids": [
+        "F-1"
+      ],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Cart"
+      ]
+    },
+    {
+      "title": "Out-of-stock product shows a sold-out message",
+      "objective": "Clarify F-2. Assumption: a 'Sold out' message is shown.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Click \"Add to cart\" on an out-of-stock Demo Lamp.",
+          "expected_result": "The message 'Sold out' is shown and the cart stays empty (assumed answer to F-2)."
+        }
+      ],
+      "status": "clarification_required",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [],
+      "risk_ids": [],
+      "finding_ids": [
+        "F-2"
+      ],
+      "open_question_ids": [
+        "F-2"
+      ],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Cart"
+      ]
+    }
+  ]
+}

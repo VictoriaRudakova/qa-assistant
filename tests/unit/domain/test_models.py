@@ -62,20 +62,31 @@ def test_analysis_rejects_duplicate_ids(analysis_data: dict[str, Any]) -> None:
         StoryAnalysis.model_validate(data)
 
 
-def test_analysis_requires_acceptance_criteria(analysis_data: dict[str, Any]) -> None:
-    with pytest.raises(ValidationError):
-        StoryAnalysis.model_validate({**analysis_data, "acceptance_criteria": []})
+def test_analysis_cannot_invent_acceptance_criteria(analysis_data: dict[str, Any]) -> None:
+    data = copy.deepcopy(analysis_data)
+    data["acceptance_criteria"].append({"id": "AC-5", "text": "Gap.", "source": "inferred"})
+    with pytest.raises(ValidationError, match="source"):
+        StoryAnalysis.model_validate(data)
+
+
+def test_analysis_allows_a_story_without_acceptance_criteria(
+    analysis_data: dict[str, Any],
+) -> None:
+    assert StoryAnalysis.model_validate({**analysis_data, "acceptance_criteria": []})
 
 
 def _draft(data: dict[str, Any], **overrides: Any) -> TestCaseDraft:
     return TestCaseDraft.model_validate({**data, **overrides})
 
 
-def test_draft_requires_steps_and_coverage(drafts_data: list[dict[str, Any]]) -> None:
+def test_draft_requires_steps_and_status(drafts_data: list[dict[str, Any]]) -> None:
     with pytest.raises(ValidationError):
         _draft(drafts_data[0], steps=[])
+    without_status = {k: v for k, v in drafts_data[0].items() if k != "status"}
+    with pytest.raises(ValidationError, match="status"):
+        TestCaseDraft.model_validate(without_status)
     with pytest.raises(ValidationError):
-        _draft(drafts_data[0], covers=[])
+        _draft(drafts_data[0], status="unknown")
 
 
 def test_step_requires_expected_result(drafts_data: list[dict[str, Any]]) -> None:
@@ -86,6 +97,8 @@ def test_step_requires_expected_result(drafts_data: list[dict[str, Any]]) -> Non
 def test_draft_rejects_duplicate_references(drafts_data: list[dict[str, Any]]) -> None:
     with pytest.raises(ValidationError, match="covers contains duplicates"):
         _draft(drafts_data[0], covers=["AC-1", "AC-1"])
+    with pytest.raises(ValidationError, match="open_question_ids contains duplicates"):
+        _draft(drafts_data[0], open_question_ids=["F-1", "F-1"])
 
 
 def test_label_cannot_contain_whitespace(drafts_data: list[dict[str, Any]]) -> None:
@@ -107,6 +120,11 @@ def test_validation_report_valid_and_round_trip() -> None:
     assert report.valid
     assert report.uncovered_ac_ids == ["AC-2"]
     assert ValidationReport.model_validate_json(report.model_dump_json()) == report
+    assert report.export_ready
     error = ValidationIssue(code="E", severity=Severity.ERROR, message="m")
     invalid = ValidationReport(issues=[error])
     assert not invalid.valid
+    assert not invalid.export_ready
+    pending = ValidationReport(clarification_required_test_case_ids=["TC-002"])
+    assert pending.valid
+    assert not pending.export_ready

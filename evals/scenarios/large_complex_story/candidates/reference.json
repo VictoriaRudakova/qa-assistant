@@ -1,0 +1,3735 @@
+{
+  "description": "Three ready cases per AC; read back through paged tools only.",
+  "analysis": {
+    "story_key": "DEMO-206",
+    "summary": "Catalogue filtering across 8 attributes and 40 filter values.",
+    "requirements": [],
+    "acceptance_criteria": [
+      {
+        "id": "AC-1",
+        "text": "Filtering the catalogue by brand \"Brand A\" shows only products with that brand.",
+        "source": "description"
+      },
+      {
+        "id": "AC-2",
+        "text": "Filtering the catalogue by brand \"Brand B\" shows only products with that brand.",
+        "source": "description"
+      },
+      {
+        "id": "AC-3",
+        "text": "Filtering the catalogue by brand \"Brand C\" shows only products with that brand.",
+        "source": "description"
+      },
+      {
+        "id": "AC-4",
+        "text": "Filtering the catalogue by brand \"Brand D\" shows only products with that brand.",
+        "source": "description"
+      },
+      {
+        "id": "AC-5",
+        "text": "Filtering the catalogue by brand \"Brand E\" shows only products with that brand.",
+        "source": "description"
+      },
+      {
+        "id": "AC-6",
+        "text": "Filtering the catalogue by colour \"Colour A\" shows only products with that colour.",
+        "source": "description"
+      },
+      {
+        "id": "AC-7",
+        "text": "Filtering the catalogue by colour \"Colour B\" shows only products with that colour.",
+        "source": "description"
+      },
+      {
+        "id": "AC-8",
+        "text": "Filtering the catalogue by colour \"Colour C\" shows only products with that colour.",
+        "source": "description"
+      },
+      {
+        "id": "AC-9",
+        "text": "Filtering the catalogue by colour \"Colour D\" shows only products with that colour.",
+        "source": "description"
+      },
+      {
+        "id": "AC-10",
+        "text": "Filtering the catalogue by colour \"Colour E\" shows only products with that colour.",
+        "source": "description"
+      },
+      {
+        "id": "AC-11",
+        "text": "Filtering the catalogue by size \"Size A\" shows only products with that size.",
+        "source": "description"
+      },
+      {
+        "id": "AC-12",
+        "text": "Filtering the catalogue by size \"Size B\" shows only products with that size.",
+        "source": "description"
+      },
+      {
+        "id": "AC-13",
+        "text": "Filtering the catalogue by size \"Size C\" shows only products with that size.",
+        "source": "description"
+      },
+      {
+        "id": "AC-14",
+        "text": "Filtering the catalogue by size \"Size D\" shows only products with that size.",
+        "source": "description"
+      },
+      {
+        "id": "AC-15",
+        "text": "Filtering the catalogue by size \"Size E\" shows only products with that size.",
+        "source": "description"
+      },
+      {
+        "id": "AC-16",
+        "text": "Filtering the catalogue by material \"Material A\" shows only products with that material.",
+        "source": "description"
+      },
+      {
+        "id": "AC-17",
+        "text": "Filtering the catalogue by material \"Material B\" shows only products with that material.",
+        "source": "description"
+      },
+      {
+        "id": "AC-18",
+        "text": "Filtering the catalogue by material \"Material C\" shows only products with that material.",
+        "source": "description"
+      },
+      {
+        "id": "AC-19",
+        "text": "Filtering the catalogue by material \"Material D\" shows only products with that material.",
+        "source": "description"
+      },
+      {
+        "id": "AC-20",
+        "text": "Filtering the catalogue by material \"Material E\" shows only products with that material.",
+        "source": "description"
+      },
+      {
+        "id": "AC-21",
+        "text": "Filtering the catalogue by price band \"Price Band A\" shows only products with that price band.",
+        "source": "description"
+      },
+      {
+        "id": "AC-22",
+        "text": "Filtering the catalogue by price band \"Price Band B\" shows only products with that price band.",
+        "source": "description"
+      },
+      {
+        "id": "AC-23",
+        "text": "Filtering the catalogue by price band \"Price Band C\" shows only products with that price band.",
+        "source": "description"
+      },
+      {
+        "id": "AC-24",
+        "text": "Filtering the catalogue by price band \"Price Band D\" shows only products with that price band.",
+        "source": "description"
+      },
+      {
+        "id": "AC-25",
+        "text": "Filtering the catalogue by price band \"Price Band E\" shows only products with that price band.",
+        "source": "description"
+      },
+      {
+        "id": "AC-26",
+        "text": "Filtering the catalogue by rating \"Rating A\" shows only products with that rating.",
+        "source": "description"
+      },
+      {
+        "id": "AC-27",
+        "text": "Filtering the catalogue by rating \"Rating B\" shows only products with that rating.",
+        "source": "description"
+      },
+      {
+        "id": "AC-28",
+        "text": "Filtering the catalogue by rating \"Rating C\" shows only products with that rating.",
+        "source": "description"
+      },
+      {
+        "id": "AC-29",
+        "text": "Filtering the catalogue by rating \"Rating D\" shows only products with that rating.",
+        "source": "description"
+      },
+      {
+        "id": "AC-30",
+        "text": "Filtering the catalogue by rating \"Rating E\" shows only products with that rating.",
+        "source": "description"
+      },
+      {
+        "id": "AC-31",
+        "text": "Filtering the catalogue by delivery time \"Delivery Time A\" shows only products with that delivery time.",
+        "source": "description"
+      },
+      {
+        "id": "AC-32",
+        "text": "Filtering the catalogue by delivery time \"Delivery Time B\" shows only products with that delivery time.",
+        "source": "description"
+      },
+      {
+        "id": "AC-33",
+        "text": "Filtering the catalogue by delivery time \"Delivery Time C\" shows only products with that delivery time.",
+        "source": "description"
+      },
+      {
+        "id": "AC-34",
+        "text": "Filtering the catalogue by delivery time \"Delivery Time D\" shows only products with that delivery time.",
+        "source": "description"
+      },
+      {
+        "id": "AC-35",
+        "text": "Filtering the catalogue by delivery time \"Delivery Time E\" shows only products with that delivery time.",
+        "source": "description"
+      },
+      {
+        "id": "AC-36",
+        "text": "Filtering the catalogue by seller \"Seller A\" shows only products with that seller.",
+        "source": "description"
+      },
+      {
+        "id": "AC-37",
+        "text": "Filtering the catalogue by seller \"Seller B\" shows only products with that seller.",
+        "source": "description"
+      },
+      {
+        "id": "AC-38",
+        "text": "Filtering the catalogue by seller \"Seller C\" shows only products with that seller.",
+        "source": "description"
+      },
+      {
+        "id": "AC-39",
+        "text": "Filtering the catalogue by seller \"Seller D\" shows only products with that seller.",
+        "source": "description"
+      },
+      {
+        "id": "AC-40",
+        "text": "Filtering the catalogue by seller \"Seller E\" shows only products with that seller.",
+        "source": "description"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F-1",
+        "kind": "question",
+        "text": "How do filters on different attributes combine (AND or OR)?",
+        "related_ac_ids": [
+          "AC-1",
+          "AC-6"
+        ]
+      },
+      {
+        "id": "F-2",
+        "kind": "missing_requirement",
+        "text": "Empty-result behaviour is not specified.",
+        "related_ac_ids": []
+      }
+    ],
+    "risks": [
+      {
+        "id": "R-1",
+        "title": "Filter returns non-matching products",
+        "description": "Index or mapping errors leak other products.",
+        "category": "functional",
+        "likelihood": "medium",
+        "impact": "high",
+        "related_ac_ids": [
+          "AC-1"
+        ]
+      },
+      {
+        "id": "R-2",
+        "title": "Slow filtering on large catalogues",
+        "description": "Filtering may be slow with many products.",
+        "category": "performance",
+        "likelihood": "medium",
+        "impact": "medium",
+        "related_ac_ids": []
+      }
+    ],
+    "assumptions": [],
+    "out_of_scope": []
+  },
+  "test_cases": [
+    {
+      "title": "Filter by brand A shows only matching products",
+      "objective": "Verify: Filter by brand A shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the brand filter value \"Brand A\".",
+          "data": "Brand A",
+          "expected_result": "Only the 25 seeded products with brand \"Brand A\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-1"
+      ],
+      "risk_ids": [
+        "R-1"
+      ],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the brand A filter restores the full list",
+      "objective": "Verify: Clearing the brand A filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Brand A\" and then clear the brand filter.",
+          "data": "Brand A",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-1"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another brand appears under brand A",
+      "objective": "Verify: No product of another brand appears under brand A.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Brand A\" and scroll through every result page.",
+          "data": "Brand A",
+          "expected_result": "No listed product has a brand other than \"Brand A\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-1"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by brand B shows only matching products",
+      "objective": "Verify: Filter by brand B shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the brand filter value \"Brand B\".",
+          "data": "Brand B",
+          "expected_result": "Only the 25 seeded products with brand \"Brand B\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-2"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the brand B filter restores the full list",
+      "objective": "Verify: Clearing the brand B filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Brand B\" and then clear the brand filter.",
+          "data": "Brand B",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-2"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another brand appears under brand B",
+      "objective": "Verify: No product of another brand appears under brand B.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Brand B\" and scroll through every result page.",
+          "data": "Brand B",
+          "expected_result": "No listed product has a brand other than \"Brand B\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-2"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by brand C shows only matching products",
+      "objective": "Verify: Filter by brand C shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the brand filter value \"Brand C\".",
+          "data": "Brand C",
+          "expected_result": "Only the 25 seeded products with brand \"Brand C\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-3"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the brand C filter restores the full list",
+      "objective": "Verify: Clearing the brand C filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Brand C\" and then clear the brand filter.",
+          "data": "Brand C",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-3"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another brand appears under brand C",
+      "objective": "Verify: No product of another brand appears under brand C.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Brand C\" and scroll through every result page.",
+          "data": "Brand C",
+          "expected_result": "No listed product has a brand other than \"Brand C\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-3"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by brand D shows only matching products",
+      "objective": "Verify: Filter by brand D shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the brand filter value \"Brand D\".",
+          "data": "Brand D",
+          "expected_result": "Only the 25 seeded products with brand \"Brand D\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-4"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the brand D filter restores the full list",
+      "objective": "Verify: Clearing the brand D filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Brand D\" and then clear the brand filter.",
+          "data": "Brand D",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-4"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another brand appears under brand D",
+      "objective": "Verify: No product of another brand appears under brand D.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Brand D\" and scroll through every result page.",
+          "data": "Brand D",
+          "expected_result": "No listed product has a brand other than \"Brand D\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-4"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by brand E shows only matching products",
+      "objective": "Verify: Filter by brand E shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the brand filter value \"Brand E\".",
+          "data": "Brand E",
+          "expected_result": "Only the 25 seeded products with brand \"Brand E\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-5"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the brand E filter restores the full list",
+      "objective": "Verify: Clearing the brand E filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Brand E\" and then clear the brand filter.",
+          "data": "Brand E",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-5"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another brand appears under brand E",
+      "objective": "Verify: No product of another brand appears under brand E.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Brand E\" and scroll through every result page.",
+          "data": "Brand E",
+          "expected_result": "No listed product has a brand other than \"Brand E\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-5"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by colour A shows only matching products",
+      "objective": "Verify: Filter by colour A shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the colour filter value \"Colour A\".",
+          "data": "Colour A",
+          "expected_result": "Only the 25 seeded products with colour \"Colour A\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-6"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the colour A filter restores the full list",
+      "objective": "Verify: Clearing the colour A filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Colour A\" and then clear the colour filter.",
+          "data": "Colour A",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-6"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another colour appears under colour A",
+      "objective": "Verify: No product of another colour appears under colour A.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Colour A\" and scroll through every result page.",
+          "data": "Colour A",
+          "expected_result": "No listed product has a colour other than \"Colour A\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-6"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by colour B shows only matching products",
+      "objective": "Verify: Filter by colour B shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the colour filter value \"Colour B\".",
+          "data": "Colour B",
+          "expected_result": "Only the 25 seeded products with colour \"Colour B\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-7"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the colour B filter restores the full list",
+      "objective": "Verify: Clearing the colour B filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Colour B\" and then clear the colour filter.",
+          "data": "Colour B",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-7"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another colour appears under colour B",
+      "objective": "Verify: No product of another colour appears under colour B.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Colour B\" and scroll through every result page.",
+          "data": "Colour B",
+          "expected_result": "No listed product has a colour other than \"Colour B\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-7"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by colour C shows only matching products",
+      "objective": "Verify: Filter by colour C shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the colour filter value \"Colour C\".",
+          "data": "Colour C",
+          "expected_result": "Only the 25 seeded products with colour \"Colour C\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-8"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the colour C filter restores the full list",
+      "objective": "Verify: Clearing the colour C filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Colour C\" and then clear the colour filter.",
+          "data": "Colour C",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-8"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another colour appears under colour C",
+      "objective": "Verify: No product of another colour appears under colour C.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Colour C\" and scroll through every result page.",
+          "data": "Colour C",
+          "expected_result": "No listed product has a colour other than \"Colour C\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-8"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by colour D shows only matching products",
+      "objective": "Verify: Filter by colour D shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the colour filter value \"Colour D\".",
+          "data": "Colour D",
+          "expected_result": "Only the 25 seeded products with colour \"Colour D\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-9"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the colour D filter restores the full list",
+      "objective": "Verify: Clearing the colour D filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Colour D\" and then clear the colour filter.",
+          "data": "Colour D",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-9"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another colour appears under colour D",
+      "objective": "Verify: No product of another colour appears under colour D.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Colour D\" and scroll through every result page.",
+          "data": "Colour D",
+          "expected_result": "No listed product has a colour other than \"Colour D\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-9"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by colour E shows only matching products",
+      "objective": "Verify: Filter by colour E shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the colour filter value \"Colour E\".",
+          "data": "Colour E",
+          "expected_result": "Only the 25 seeded products with colour \"Colour E\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-10"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the colour E filter restores the full list",
+      "objective": "Verify: Clearing the colour E filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Colour E\" and then clear the colour filter.",
+          "data": "Colour E",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-10"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another colour appears under colour E",
+      "objective": "Verify: No product of another colour appears under colour E.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Colour E\" and scroll through every result page.",
+          "data": "Colour E",
+          "expected_result": "No listed product has a colour other than \"Colour E\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-10"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by size A shows only matching products",
+      "objective": "Verify: Filter by size A shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the size filter value \"Size A\".",
+          "data": "Size A",
+          "expected_result": "Only the 25 seeded products with size \"Size A\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-11"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the size A filter restores the full list",
+      "objective": "Verify: Clearing the size A filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Size A\" and then clear the size filter.",
+          "data": "Size A",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-11"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another size appears under size A",
+      "objective": "Verify: No product of another size appears under size A.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Size A\" and scroll through every result page.",
+          "data": "Size A",
+          "expected_result": "No listed product has a size other than \"Size A\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-11"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by size B shows only matching products",
+      "objective": "Verify: Filter by size B shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the size filter value \"Size B\".",
+          "data": "Size B",
+          "expected_result": "Only the 25 seeded products with size \"Size B\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-12"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the size B filter restores the full list",
+      "objective": "Verify: Clearing the size B filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Size B\" and then clear the size filter.",
+          "data": "Size B",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-12"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another size appears under size B",
+      "objective": "Verify: No product of another size appears under size B.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Size B\" and scroll through every result page.",
+          "data": "Size B",
+          "expected_result": "No listed product has a size other than \"Size B\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-12"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by size C shows only matching products",
+      "objective": "Verify: Filter by size C shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the size filter value \"Size C\".",
+          "data": "Size C",
+          "expected_result": "Only the 25 seeded products with size \"Size C\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-13"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the size C filter restores the full list",
+      "objective": "Verify: Clearing the size C filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Size C\" and then clear the size filter.",
+          "data": "Size C",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-13"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another size appears under size C",
+      "objective": "Verify: No product of another size appears under size C.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Size C\" and scroll through every result page.",
+          "data": "Size C",
+          "expected_result": "No listed product has a size other than \"Size C\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-13"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by size D shows only matching products",
+      "objective": "Verify: Filter by size D shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the size filter value \"Size D\".",
+          "data": "Size D",
+          "expected_result": "Only the 25 seeded products with size \"Size D\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-14"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the size D filter restores the full list",
+      "objective": "Verify: Clearing the size D filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Size D\" and then clear the size filter.",
+          "data": "Size D",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-14"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another size appears under size D",
+      "objective": "Verify: No product of another size appears under size D.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Size D\" and scroll through every result page.",
+          "data": "Size D",
+          "expected_result": "No listed product has a size other than \"Size D\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-14"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by size E shows only matching products",
+      "objective": "Verify: Filter by size E shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the size filter value \"Size E\".",
+          "data": "Size E",
+          "expected_result": "Only the 25 seeded products with size \"Size E\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-15"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the size E filter restores the full list",
+      "objective": "Verify: Clearing the size E filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Size E\" and then clear the size filter.",
+          "data": "Size E",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-15"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another size appears under size E",
+      "objective": "Verify: No product of another size appears under size E.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Size E\" and scroll through every result page.",
+          "data": "Size E",
+          "expected_result": "No listed product has a size other than \"Size E\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-15"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by material A shows only matching products",
+      "objective": "Verify: Filter by material A shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the material filter value \"Material A\".",
+          "data": "Material A",
+          "expected_result": "Only the 25 seeded products with material \"Material A\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-16"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the material A filter restores the full list",
+      "objective": "Verify: Clearing the material A filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Material A\" and then clear the material filter.",
+          "data": "Material A",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-16"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another material appears under material A",
+      "objective": "Verify: No product of another material appears under material A.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Material A\" and scroll through every result page.",
+          "data": "Material A",
+          "expected_result": "No listed product has a material other than \"Material A\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-16"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by material B shows only matching products",
+      "objective": "Verify: Filter by material B shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the material filter value \"Material B\".",
+          "data": "Material B",
+          "expected_result": "Only the 25 seeded products with material \"Material B\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-17"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the material B filter restores the full list",
+      "objective": "Verify: Clearing the material B filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Material B\" and then clear the material filter.",
+          "data": "Material B",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-17"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another material appears under material B",
+      "objective": "Verify: No product of another material appears under material B.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Material B\" and scroll through every result page.",
+          "data": "Material B",
+          "expected_result": "No listed product has a material other than \"Material B\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-17"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by material C shows only matching products",
+      "objective": "Verify: Filter by material C shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the material filter value \"Material C\".",
+          "data": "Material C",
+          "expected_result": "Only the 25 seeded products with material \"Material C\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-18"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the material C filter restores the full list",
+      "objective": "Verify: Clearing the material C filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Material C\" and then clear the material filter.",
+          "data": "Material C",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-18"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another material appears under material C",
+      "objective": "Verify: No product of another material appears under material C.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Material C\" and scroll through every result page.",
+          "data": "Material C",
+          "expected_result": "No listed product has a material other than \"Material C\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-18"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by material D shows only matching products",
+      "objective": "Verify: Filter by material D shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the material filter value \"Material D\".",
+          "data": "Material D",
+          "expected_result": "Only the 25 seeded products with material \"Material D\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-19"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the material D filter restores the full list",
+      "objective": "Verify: Clearing the material D filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Material D\" and then clear the material filter.",
+          "data": "Material D",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-19"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another material appears under material D",
+      "objective": "Verify: No product of another material appears under material D.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Material D\" and scroll through every result page.",
+          "data": "Material D",
+          "expected_result": "No listed product has a material other than \"Material D\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-19"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by material E shows only matching products",
+      "objective": "Verify: Filter by material E shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the material filter value \"Material E\".",
+          "data": "Material E",
+          "expected_result": "Only the 25 seeded products with material \"Material E\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-20"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the material E filter restores the full list",
+      "objective": "Verify: Clearing the material E filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Material E\" and then clear the material filter.",
+          "data": "Material E",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-20"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another material appears under material E",
+      "objective": "Verify: No product of another material appears under material E.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Material E\" and scroll through every result page.",
+          "data": "Material E",
+          "expected_result": "No listed product has a material other than \"Material E\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-20"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by price band A shows only matching products",
+      "objective": "Verify: Filter by price band A shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the price band filter value \"Price Band A\".",
+          "data": "Price Band A",
+          "expected_result": "Only the 25 seeded products with price band \"Price Band A\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-21"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the price band A filter restores the full list",
+      "objective": "Verify: Clearing the price band A filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Price Band A\" and then clear the price band filter.",
+          "data": "Price Band A",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-21"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another price band appears under price band A",
+      "objective": "Verify: No product of another price band appears under price band A.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Price Band A\" and scroll through every result page.",
+          "data": "Price Band A",
+          "expected_result": "No listed product has a price band other than \"Price Band A\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-21"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by price band B shows only matching products",
+      "objective": "Verify: Filter by price band B shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the price band filter value \"Price Band B\".",
+          "data": "Price Band B",
+          "expected_result": "Only the 25 seeded products with price band \"Price Band B\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-22"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the price band B filter restores the full list",
+      "objective": "Verify: Clearing the price band B filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Price Band B\" and then clear the price band filter.",
+          "data": "Price Band B",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-22"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another price band appears under price band B",
+      "objective": "Verify: No product of another price band appears under price band B.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Price Band B\" and scroll through every result page.",
+          "data": "Price Band B",
+          "expected_result": "No listed product has a price band other than \"Price Band B\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-22"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by price band C shows only matching products",
+      "objective": "Verify: Filter by price band C shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the price band filter value \"Price Band C\".",
+          "data": "Price Band C",
+          "expected_result": "Only the 25 seeded products with price band \"Price Band C\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-23"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the price band C filter restores the full list",
+      "objective": "Verify: Clearing the price band C filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Price Band C\" and then clear the price band filter.",
+          "data": "Price Band C",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-23"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another price band appears under price band C",
+      "objective": "Verify: No product of another price band appears under price band C.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Price Band C\" and scroll through every result page.",
+          "data": "Price Band C",
+          "expected_result": "No listed product has a price band other than \"Price Band C\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-23"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by price band D shows only matching products",
+      "objective": "Verify: Filter by price band D shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the price band filter value \"Price Band D\".",
+          "data": "Price Band D",
+          "expected_result": "Only the 25 seeded products with price band \"Price Band D\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-24"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the price band D filter restores the full list",
+      "objective": "Verify: Clearing the price band D filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Price Band D\" and then clear the price band filter.",
+          "data": "Price Band D",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-24"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another price band appears under price band D",
+      "objective": "Verify: No product of another price band appears under price band D.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Price Band D\" and scroll through every result page.",
+          "data": "Price Band D",
+          "expected_result": "No listed product has a price band other than \"Price Band D\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-24"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by price band E shows only matching products",
+      "objective": "Verify: Filter by price band E shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the price band filter value \"Price Band E\".",
+          "data": "Price Band E",
+          "expected_result": "Only the 25 seeded products with price band \"Price Band E\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-25"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the price band E filter restores the full list",
+      "objective": "Verify: Clearing the price band E filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Price Band E\" and then clear the price band filter.",
+          "data": "Price Band E",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-25"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another price band appears under price band E",
+      "objective": "Verify: No product of another price band appears under price band E.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Price Band E\" and scroll through every result page.",
+          "data": "Price Band E",
+          "expected_result": "No listed product has a price band other than \"Price Band E\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-25"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by rating A shows only matching products",
+      "objective": "Verify: Filter by rating A shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the rating filter value \"Rating A\".",
+          "data": "Rating A",
+          "expected_result": "Only the 25 seeded products with rating \"Rating A\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-26"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the rating A filter restores the full list",
+      "objective": "Verify: Clearing the rating A filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Rating A\" and then clear the rating filter.",
+          "data": "Rating A",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-26"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another rating appears under rating A",
+      "objective": "Verify: No product of another rating appears under rating A.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Rating A\" and scroll through every result page.",
+          "data": "Rating A",
+          "expected_result": "No listed product has a rating other than \"Rating A\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-26"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by rating B shows only matching products",
+      "objective": "Verify: Filter by rating B shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the rating filter value \"Rating B\".",
+          "data": "Rating B",
+          "expected_result": "Only the 25 seeded products with rating \"Rating B\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-27"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the rating B filter restores the full list",
+      "objective": "Verify: Clearing the rating B filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Rating B\" and then clear the rating filter.",
+          "data": "Rating B",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-27"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another rating appears under rating B",
+      "objective": "Verify: No product of another rating appears under rating B.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Rating B\" and scroll through every result page.",
+          "data": "Rating B",
+          "expected_result": "No listed product has a rating other than \"Rating B\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-27"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by rating C shows only matching products",
+      "objective": "Verify: Filter by rating C shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the rating filter value \"Rating C\".",
+          "data": "Rating C",
+          "expected_result": "Only the 25 seeded products with rating \"Rating C\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-28"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the rating C filter restores the full list",
+      "objective": "Verify: Clearing the rating C filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Rating C\" and then clear the rating filter.",
+          "data": "Rating C",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-28"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another rating appears under rating C",
+      "objective": "Verify: No product of another rating appears under rating C.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Rating C\" and scroll through every result page.",
+          "data": "Rating C",
+          "expected_result": "No listed product has a rating other than \"Rating C\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-28"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by rating D shows only matching products",
+      "objective": "Verify: Filter by rating D shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the rating filter value \"Rating D\".",
+          "data": "Rating D",
+          "expected_result": "Only the 25 seeded products with rating \"Rating D\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-29"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the rating D filter restores the full list",
+      "objective": "Verify: Clearing the rating D filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Rating D\" and then clear the rating filter.",
+          "data": "Rating D",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-29"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another rating appears under rating D",
+      "objective": "Verify: No product of another rating appears under rating D.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Rating D\" and scroll through every result page.",
+          "data": "Rating D",
+          "expected_result": "No listed product has a rating other than \"Rating D\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-29"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by rating E shows only matching products",
+      "objective": "Verify: Filter by rating E shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the rating filter value \"Rating E\".",
+          "data": "Rating E",
+          "expected_result": "Only the 25 seeded products with rating \"Rating E\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-30"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the rating E filter restores the full list",
+      "objective": "Verify: Clearing the rating E filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Rating E\" and then clear the rating filter.",
+          "data": "Rating E",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-30"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another rating appears under rating E",
+      "objective": "Verify: No product of another rating appears under rating E.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Rating E\" and scroll through every result page.",
+          "data": "Rating E",
+          "expected_result": "No listed product has a rating other than \"Rating E\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-30"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by delivery time A shows only matching products",
+      "objective": "Verify: Filter by delivery time A shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the delivery time filter value \"Delivery Time A\".",
+          "data": "Delivery Time A",
+          "expected_result": "Only the 25 seeded products with delivery time \"Delivery Time A\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-31"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the delivery time A filter restores the full list",
+      "objective": "Verify: Clearing the delivery time A filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Delivery Time A\" and then clear the delivery time filter.",
+          "data": "Delivery Time A",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-31"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another delivery time appears under delivery time A",
+      "objective": "Verify: No product of another delivery time appears under delivery time A.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Delivery Time A\" and scroll through every result page.",
+          "data": "Delivery Time A",
+          "expected_result": "No listed product has a delivery time other than \"Delivery Time A\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-31"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by delivery time B shows only matching products",
+      "objective": "Verify: Filter by delivery time B shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the delivery time filter value \"Delivery Time B\".",
+          "data": "Delivery Time B",
+          "expected_result": "Only the 25 seeded products with delivery time \"Delivery Time B\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-32"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the delivery time B filter restores the full list",
+      "objective": "Verify: Clearing the delivery time B filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Delivery Time B\" and then clear the delivery time filter.",
+          "data": "Delivery Time B",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-32"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another delivery time appears under delivery time B",
+      "objective": "Verify: No product of another delivery time appears under delivery time B.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Delivery Time B\" and scroll through every result page.",
+          "data": "Delivery Time B",
+          "expected_result": "No listed product has a delivery time other than \"Delivery Time B\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-32"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by delivery time C shows only matching products",
+      "objective": "Verify: Filter by delivery time C shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the delivery time filter value \"Delivery Time C\".",
+          "data": "Delivery Time C",
+          "expected_result": "Only the 25 seeded products with delivery time \"Delivery Time C\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-33"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the delivery time C filter restores the full list",
+      "objective": "Verify: Clearing the delivery time C filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Delivery Time C\" and then clear the delivery time filter.",
+          "data": "Delivery Time C",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-33"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another delivery time appears under delivery time C",
+      "objective": "Verify: No product of another delivery time appears under delivery time C.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Delivery Time C\" and scroll through every result page.",
+          "data": "Delivery Time C",
+          "expected_result": "No listed product has a delivery time other than \"Delivery Time C\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-33"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by delivery time D shows only matching products",
+      "objective": "Verify: Filter by delivery time D shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the delivery time filter value \"Delivery Time D\".",
+          "data": "Delivery Time D",
+          "expected_result": "Only the 25 seeded products with delivery time \"Delivery Time D\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-34"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the delivery time D filter restores the full list",
+      "objective": "Verify: Clearing the delivery time D filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Delivery Time D\" and then clear the delivery time filter.",
+          "data": "Delivery Time D",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-34"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another delivery time appears under delivery time D",
+      "objective": "Verify: No product of another delivery time appears under delivery time D.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Delivery Time D\" and scroll through every result page.",
+          "data": "Delivery Time D",
+          "expected_result": "No listed product has a delivery time other than \"Delivery Time D\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-34"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by delivery time E shows only matching products",
+      "objective": "Verify: Filter by delivery time E shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the delivery time filter value \"Delivery Time E\".",
+          "data": "Delivery Time E",
+          "expected_result": "Only the 25 seeded products with delivery time \"Delivery Time E\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-35"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the delivery time E filter restores the full list",
+      "objective": "Verify: Clearing the delivery time E filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Delivery Time E\" and then clear the delivery time filter.",
+          "data": "Delivery Time E",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-35"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another delivery time appears under delivery time E",
+      "objective": "Verify: No product of another delivery time appears under delivery time E.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Delivery Time E\" and scroll through every result page.",
+          "data": "Delivery Time E",
+          "expected_result": "No listed product has a delivery time other than \"Delivery Time E\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-35"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by seller A shows only matching products",
+      "objective": "Verify: Filter by seller A shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the seller filter value \"Seller A\".",
+          "data": "Seller A",
+          "expected_result": "Only the 25 seeded products with seller \"Seller A\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-36"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the seller A filter restores the full list",
+      "objective": "Verify: Clearing the seller A filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Seller A\" and then clear the seller filter.",
+          "data": "Seller A",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-36"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another seller appears under seller A",
+      "objective": "Verify: No product of another seller appears under seller A.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Seller A\" and scroll through every result page.",
+          "data": "Seller A",
+          "expected_result": "No listed product has a seller other than \"Seller A\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-36"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by seller B shows only matching products",
+      "objective": "Verify: Filter by seller B shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the seller filter value \"Seller B\".",
+          "data": "Seller B",
+          "expected_result": "Only the 25 seeded products with seller \"Seller B\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-37"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the seller B filter restores the full list",
+      "objective": "Verify: Clearing the seller B filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Seller B\" and then clear the seller filter.",
+          "data": "Seller B",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-37"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another seller appears under seller B",
+      "objective": "Verify: No product of another seller appears under seller B.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Seller B\" and scroll through every result page.",
+          "data": "Seller B",
+          "expected_result": "No listed product has a seller other than \"Seller B\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-37"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by seller C shows only matching products",
+      "objective": "Verify: Filter by seller C shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the seller filter value \"Seller C\".",
+          "data": "Seller C",
+          "expected_result": "Only the 25 seeded products with seller \"Seller C\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-38"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the seller C filter restores the full list",
+      "objective": "Verify: Clearing the seller C filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Seller C\" and then clear the seller filter.",
+          "data": "Seller C",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-38"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another seller appears under seller C",
+      "objective": "Verify: No product of another seller appears under seller C.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Seller C\" and scroll through every result page.",
+          "data": "Seller C",
+          "expected_result": "No listed product has a seller other than \"Seller C\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-38"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by seller D shows only matching products",
+      "objective": "Verify: Filter by seller D shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the seller filter value \"Seller D\".",
+          "data": "Seller D",
+          "expected_result": "Only the 25 seeded products with seller \"Seller D\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-39"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the seller D filter restores the full list",
+      "objective": "Verify: Clearing the seller D filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Seller D\" and then clear the seller filter.",
+          "data": "Seller D",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-39"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another seller appears under seller D",
+      "objective": "Verify: No product of another seller appears under seller D.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Seller D\" and scroll through every result page.",
+          "data": "Seller D",
+          "expected_result": "No listed product has a seller other than \"Seller D\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-39"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Filter by seller E shows only matching products",
+      "objective": "Verify: Filter by seller E shows only matching products.",
+      "preconditions": [
+        "The catalogue is seeded with the synthetic 200-product data set."
+      ],
+      "steps": [
+        {
+          "action": "Open the catalogue page.",
+          "expected_result": "All 200 seeded products are listed."
+        },
+        {
+          "action": "Select the seller filter value \"Seller E\".",
+          "data": "Seller E",
+          "expected_result": "Only the 25 seeded products with seller \"Seller E\" are listed."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-40"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "Clearing the seller E filter restores the full list",
+      "objective": "Verify: Clearing the seller E filter restores the full list.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Seller E\" and then clear the seller filter.",
+          "data": "Seller E",
+          "expected_result": "All 200 seeded products are listed again."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-40"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    },
+    {
+      "title": "No product of another seller appears under seller E",
+      "objective": "Verify: No product of another seller appears under seller E.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "Select \"Seller E\" and scroll through every result page.",
+          "data": "Seller E",
+          "expected_result": "No listed product has a seller other than \"Seller E\"."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-40"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Catalogue"
+      ]
+    }
+  ]
+}

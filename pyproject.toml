@@ -57,7 +57,7 @@ known-first-party = ["qa_assistant", "tests"]
 python_version = "3.12"
 strict = true
 plugins = ["pydantic.mypy"]
-files = ["src", "tests"]
+files = ["src", "tests", "evals", "scripts"]
 mypy_path = ["src", "."]
 explicit_package_bases = true
 

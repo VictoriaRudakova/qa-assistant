@@ -1,0 +1,333 @@
+{
+  "description": "Negative control: the decision-table case no longer traces the high-severity regulatory risk R-1 and nothing else does.",
+  "analysis": {
+    "story_key": "DEMO-213",
+    "summary": "Placeholder personalisation with a fallback, opt-out and self-exclusion filtering, and a daily frequency cap. Time zone of the cap and a missing bonus value are unspecified.",
+    "requirements": [],
+    "acceptance_criteria": [
+      {
+        "id": "AC-1",
+        "text": "A campaign message can contain the placeholders {first_name} and {bonus_amount}, which are replaced with the recipient's values when the message is sent.",
+        "source": "description"
+      },
+      {
+        "id": "AC-2",
+        "text": "If a recipient has no first name, {first_name} is replaced with \"Player\".",
+        "source": "description"
+      },
+      {
+        "id": "AC-3",
+        "text": "Recipients who opted out of marketing communication are excluded from the campaign audience.",
+        "source": "description"
+      },
+      {
+        "id": "AC-4",
+        "text": "Recipients with an active self-exclusion are never sent promotional messages.",
+        "source": "description"
+      },
+      {
+        "id": "AC-5",
+        "text": "A recipient receives at most one message from the same campaign per calendar day.",
+        "source": "description"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F-1",
+        "kind": "ambiguity",
+        "text": "Which time zone defines the calendar day of the frequency cap: the recipient's or the platform's?",
+        "related_ac_ids": [
+          "AC-5"
+        ]
+      },
+      {
+        "id": "F-2",
+        "kind": "missing_requirement",
+        "text": "What happens when {bonus_amount} has no value for a recipient: skip the recipient, send without it, or fail the send?",
+        "related_ac_ids": [
+          "AC-1"
+        ]
+      },
+      {
+        "id": "F-3",
+        "kind": "question",
+        "text": "Are opt-out and self-exclusion evaluated when the audience is built or again at send time?",
+        "related_ac_ids": [
+          "AC-3",
+          "AC-4"
+        ]
+      },
+      {
+        "id": "F-4",
+        "kind": "question",
+        "text": "Which channels (email, SMS, push) are in scope?",
+        "related_ac_ids": []
+      }
+    ],
+    "risks": [
+      {
+        "id": "R-1",
+        "title": "Self-excluded player contacted",
+        "description": "A promotional message reaches a self-excluded player.",
+        "category": "regulatory",
+        "likelihood": "medium",
+        "impact": "high",
+        "related_ac_ids": [
+          "AC-4"
+        ]
+      },
+      {
+        "id": "R-2",
+        "title": "Raw placeholder shown",
+        "description": "Recipients see '{first_name}' or '{bonus_amount}'.",
+        "category": "functional",
+        "likelihood": "medium",
+        "impact": "medium",
+        "related_ac_ids": [
+          "AC-1",
+          "AC-2"
+        ]
+      },
+      {
+        "id": "R-3",
+        "title": "Duplicate messages",
+        "description": "The cap fails and recipients get several messages a day.",
+        "category": "functional",
+        "likelihood": "medium",
+        "impact": "medium",
+        "related_ac_ids": [
+          "AC-5"
+        ]
+      }
+    ],
+    "assumptions": [],
+    "out_of_scope": []
+  },
+  "test_cases": [
+    {
+      "title": "Both placeholders are replaced with the recipient's values",
+      "objective": "AC-1.",
+      "preconditions": [
+        "Campaign 'Weekend reload' uses the message 'Hi {first_name}, your bonus is {bonus_amount}'"
+      ],
+      "steps": [
+        {
+          "action": "Send the campaign to recipient alex@example.com (first name Alex, bonus amount 25).",
+          "expected_result": "The delivered message reads 'Hi Alex, your bonus is 25'."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-1"
+      ],
+      "risk_ids": [
+        "R-2"
+      ],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "CRM"
+      ]
+    },
+    {
+      "title": "A recipient without a first name is addressed as Player",
+      "objective": "AC-2 partition: first name missing.",
+      "preconditions": [
+        "Campaign 'Weekend reload' uses the message 'Hi {first_name}, your bonus is {bonus_amount}'"
+      ],
+      "steps": [
+        {
+          "action": "Send the campaign to recipient sam@example.com (no first name, bonus amount 10).",
+          "expected_result": "The delivered message reads 'Hi Player, your bonus is 10'."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "equivalence_partitioning",
+      "covers": [
+        "AC-1",
+        "AC-2"
+      ],
+      "risk_ids": [
+        "R-2"
+      ],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "CRM"
+      ]
+    },
+    {
+      "title": "An opted-out recipient is not in the audience",
+      "objective": "AC-3.",
+      "preconditions": [
+        "Campaign 'Weekend reload' uses the message 'Hi {first_name}, your bonus is {bonus_amount}'"
+      ],
+      "steps": [
+        {
+          "action": "Build the audience of the campaign with recipient kim@example.com who opted out.",
+          "expected_result": "kim@example.com is not in the audience and receives no message."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-3"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "CRM"
+      ]
+    },
+    {
+      "title": "Self-exclusion and opt-in decide who is messaged",
+      "objective": "AC-3 and AC-4 decision table.",
+      "preconditions": [
+        "Campaign 'Weekend reload' uses the message 'Hi {first_name}, your bonus is {bonus_amount}'"
+      ],
+      "steps": [
+        {
+          "action": "Send the campaign to an opted-in recipient without self-exclusion.",
+          "expected_result": "The recipient receives the message."
+        },
+        {
+          "action": "Send the campaign to an opted-in recipient with an active self-exclusion.",
+          "expected_result": "The recipient receives no message."
+        },
+        {
+          "action": "Send the campaign to an opted-out recipient with an active self-exclusion.",
+          "expected_result": "The recipient receives no message."
+        }
+      ],
+      "status": "ready",
+      "priority": "high",
+      "technique": "decision_table",
+      "covers": [
+        "AC-3",
+        "AC-4"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "CRM"
+      ]
+    },
+    {
+      "title": "A second send of the same campaign on the same day is suppressed",
+      "objective": "AC-5: two sends one hour apart at midday are the same day in every time zone.",
+      "preconditions": [
+        "Campaign 'Weekend reload' uses the message 'Hi {first_name}, your bonus is {bonus_amount}'"
+      ],
+      "steps": [
+        {
+          "action": "Send the campaign to alex@example.com at 11:00 UTC and again at 12:00 UTC.",
+          "expected_result": "alex@example.com receives exactly one the campaign message."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-5"
+      ],
+      "risk_ids": [
+        "R-3"
+      ],
+      "finding_ids": [
+        "F-1"
+      ],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "CRM"
+      ]
+    },
+    {
+      "title": "Sends 24 hours apart are both delivered",
+      "objective": "AC-5: 24 hours apart always fall on different calendar days.",
+      "preconditions": [
+        "Campaign 'Weekend reload' uses the message 'Hi {first_name}, your bonus is {bonus_amount}'"
+      ],
+      "steps": [
+        {
+          "action": "Send the campaign to alex@example.com on day 1 at 12:00 UTC and on day 2 at 12:00 UTC.",
+          "expected_result": "alex@example.com receives two the campaign messages, one per day."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "boundary_value",
+      "covers": [
+        "AC-5"
+      ],
+      "risk_ids": [
+        "R-3"
+      ],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "CRM"
+      ]
+    },
+    {
+      "title": "Sends around platform midnight for a recipient in another time zone",
+      "objective": "AC-5 across midnight; depends on F-1 (whose calendar day).",
+      "preconditions": [
+        "Campaign 'Weekend reload' uses the message 'Hi {first_name}, your bonus is {bonus_amount}'"
+      ],
+      "steps": [
+        {
+          "action": "Send the campaign at 23:30 and 00:30 platform time to a recipient whose time zone is UTC+2.",
+          "expected_result": "The number of messages delivered follows the PO answer to F-1."
+        }
+      ],
+      "status": "clarification_required",
+      "priority": "medium",
+      "technique": "boundary_value",
+      "covers": [
+        "AC-5"
+      ],
+      "risk_ids": [
+        "R-3"
+      ],
+      "finding_ids": [
+        "F-1"
+      ],
+      "open_question_ids": [
+        "F-1"
+      ],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "CRM"
+      ]
+    }
+  ],
+  "expected_failed_checks": [
+    "high_risk_coverage"
+  ]
+}
