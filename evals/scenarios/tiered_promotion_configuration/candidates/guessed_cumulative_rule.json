@@ -1,0 +1,369 @@
+{
+  "description": "Negative control: the cumulative-deposit question is answered by guessing and the case is marked ready. Structurally valid (it covers AC-4), so only the scenario reference catches it.",
+  "analysis": {
+    "story_key": "DEMO-210",
+    "summary": "Tier configuration limits, ordering validation, highest-tier-only award and activation guard. Unclear whether tiers are reached per deposit or cumulatively.",
+    "requirements": [],
+    "acceptance_criteria": [
+      {
+        "id": "AC-1",
+        "text": "A tiered promotion has between 1 and 5 tiers.",
+        "source": "description"
+      },
+      {
+        "id": "AC-2",
+        "text": "Each tier defines a minimum qualifying deposit and a bonus percentage from 1 to 200.",
+        "source": "description"
+      },
+      {
+        "id": "AC-3",
+        "text": "Tier minimum deposits must be strictly increasing; saving tiers that are not in increasing order is rejected with a validation error.",
+        "source": "description"
+      },
+      {
+        "id": "AC-4",
+        "text": "A player who qualifies for several tiers receives the bonus of the highest tier reached only.",
+        "source": "description"
+      },
+      {
+        "id": "AC-5",
+        "text": "A tiered promotion cannot be activated while it has no tiers.",
+        "source": "description"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F-1",
+        "kind": "ambiguity",
+        "text": "Is the tier reached evaluated per single deposit or on the cumulative deposits made during the promotion period?",
+        "related_ac_ids": [
+          "AC-4"
+        ]
+      },
+      {
+        "id": "F-2",
+        "kind": "missing_requirement",
+        "text": "Is there a maximum bonus amount per tier?",
+        "related_ac_ids": [
+          "AC-2"
+        ]
+      },
+      {
+        "id": "F-3",
+        "kind": "question",
+        "text": "Can tiers be edited after activation, and what happens to bonuses already granted?",
+        "related_ac_ids": [
+          "AC-1"
+        ]
+      }
+    ],
+    "risks": [
+      {
+        "id": "R-1",
+        "title": "Wrong tier awarded",
+        "description": "A player receives the bonus of a lower tier or of several tiers.",
+        "category": "functional",
+        "likelihood": "medium",
+        "impact": "high",
+        "related_ac_ids": [
+          "AC-4"
+        ]
+      },
+      {
+        "id": "R-2",
+        "title": "Invalid configuration saved",
+        "description": "Out-of-range or unordered tiers are stored and break bonus calculation.",
+        "category": "data",
+        "likelihood": "medium",
+        "impact": "high",
+        "related_ac_ids": [
+          "AC-2",
+          "AC-3"
+        ]
+      }
+    ],
+    "assumptions": [],
+    "out_of_scope": []
+  },
+  "test_cases": [
+    {
+      "title": "Tiered promotion saves with 1 and with 5 tiers",
+      "objective": "AC-1 lower and upper boundary of the tier count.",
+      "preconditions": [
+        "A promotion manager is signed in to the promotion editor"
+      ],
+      "steps": [
+        {
+          "action": "Create a tiered promotion with 1 tier (min deposit 10, bonus 50) and save.",
+          "expected_result": "The promotion is saved with exactly 1 tier."
+        },
+        {
+          "action": "Add tiers until there are 5 (min deposits 10, 20, 30, 40, 50) and save.",
+          "expected_result": "The promotion is saved with exactly 5 tiers."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "boundary_value",
+      "covers": [
+        "AC-1"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Bonus Engine"
+      ]
+    },
+    {
+      "title": "A sixth tier is never stored",
+      "objective": "AC-1 upper boundary + 1.",
+      "preconditions": [
+        "A promotion manager is signed in to the promotion editor"
+      ],
+      "steps": [
+        {
+          "action": "Open a tiered promotion with 5 tiers and try to add a sixth tier with min deposit 60.",
+          "expected_result": "After saving and reopening, the promotion still has 5 tiers."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "boundary_value",
+      "covers": [
+        "AC-1"
+      ],
+      "risk_ids": [
+        "R-2"
+      ],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Bonus Engine"
+      ]
+    },
+    {
+      "title": "Bonus percentages 1 and 200 are accepted",
+      "objective": "AC-2 boundaries of the bonus percentage.",
+      "preconditions": [
+        "A promotion manager is signed in to the promotion editor"
+      ],
+      "steps": [
+        {
+          "action": "Set tier 1 bonus to 1 percent and tier 2 bonus to 200 percent and save.",
+          "expected_result": "The promotion is saved and shows 1 and 200 percent."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "boundary_value",
+      "covers": [
+        "AC-2"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Bonus Engine"
+      ]
+    },
+    {
+      "title": "Bonus percentages 0 and 201 are never stored",
+      "objective": "AC-2 invalid partitions just outside the range.",
+      "preconditions": [
+        "A promotion manager is signed in to the promotion editor"
+      ],
+      "steps": [
+        {
+          "action": "Set a tier bonus to 0 percent and save.",
+          "expected_result": "The bonus percentage 0 is not stored; the tier keeps its previous value."
+        },
+        {
+          "action": "Set a tier bonus to 201 percent and save.",
+          "expected_result": "The bonus percentage 201 is not stored; the tier keeps its previous value."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-2"
+      ],
+      "risk_ids": [
+        "R-2"
+      ],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Bonus Engine"
+      ]
+    },
+    {
+      "title": "Tiers in decreasing order are rejected with a validation error",
+      "objective": "AC-3 invalid ordering.",
+      "preconditions": [
+        "A promotion manager is signed in to the promotion editor"
+      ],
+      "steps": [
+        {
+          "action": "Configure tier 1 min deposit 50 and tier 2 min deposit 20 and save.",
+          "expected_result": "Saving is rejected with a validation error and the tiers are not stored."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-3"
+      ],
+      "risk_ids": [
+        "R-2"
+      ],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Bonus Engine"
+      ]
+    },
+    {
+      "title": "Two tiers with the same minimum deposit are rejected",
+      "objective": "AC-3 boundary of 'strictly increasing'.",
+      "preconditions": [
+        "A promotion manager is signed in to the promotion editor"
+      ],
+      "steps": [
+        {
+          "action": "Configure tier 1 and tier 2 both with min deposit 20 and save.",
+          "expected_result": "Saving is rejected with a validation error and the tiers are not stored."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "boundary_value",
+      "covers": [
+        "AC-3"
+      ],
+      "risk_ids": [
+        "R-2"
+      ],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Bonus Engine"
+      ]
+    },
+    {
+      "title": "A single deposit reaching tier 2 of 3 grants only the tier 2 bonus",
+      "objective": "AC-4 holds whether tiers are per deposit or cumulative: one deposit only.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "As a player with no earlier deposits in the period, deposit 25 into a promotion with tiers 10/50%, 20/100%, 30/150%.",
+          "expected_result": "The player receives a 100 percent bonus (25) and no other tier bonus."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "decision_table",
+      "covers": [
+        "AC-4"
+      ],
+      "risk_ids": [
+        "R-1"
+      ],
+      "finding_ids": [
+        "F-1"
+      ],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Bonus Engine"
+      ]
+    },
+    {
+      "title": "Two deposits whose sum reaches tier 3",
+      "objective": "AC-4 with cumulative deposits; depends on F-1 (per deposit or cumulative).",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "As a player, deposit 15 and then 15 into a promotion with tiers 10/50%, 20/100%, 30/150%.",
+          "expected_result": "The player receives the tier 3 bonus of 150 percent (45)."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "decision_table",
+      "covers": [
+        "AC-4"
+      ],
+      "risk_ids": [
+        "R-1"
+      ],
+      "finding_ids": [
+        "F-1"
+      ],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Bonus Engine"
+      ]
+    },
+    {
+      "title": "Activation is refused without tiers and allowed after adding one",
+      "objective": "AC-5 activation guard as a state transition.",
+      "preconditions": [
+        "A promotion manager is signed in to the promotion editor"
+      ],
+      "steps": [
+        {
+          "action": "Try to activate a tiered promotion that has no tiers.",
+          "expected_result": "The promotion stays in Draft status."
+        },
+        {
+          "action": "Add one tier (min deposit 10, bonus 50) and activate again.",
+          "expected_result": "The promotion moves to Active status."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-5"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Bonus Engine"
+      ]
+    }
+  ],
+  "expected_failed_checks": [
+    "expected_blocked"
+  ]
+}

@@ -45,6 +45,8 @@ class JiraSettings(BaseSettings):
     deployment: JiraDeployment | None = None
     max_search_results: Annotated[int, Field(ge=1, le=100)] = 50
     timeout_seconds: Annotated[float, Field(gt=0, le=120)] = 30.0
+    # Evals only: serve synthetic stories from <dir>/<KEY>.json instead of a Jira instance.
+    fixtures_dir: Path | None = None
 
     def missing_settings(self) -> list[str]:
         """Names of env vars still required before a Jira client can be built."""

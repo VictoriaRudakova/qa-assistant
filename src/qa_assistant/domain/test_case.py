@@ -10,13 +10,14 @@ from pydantic import Field, StringConstraints, model_validator
 from qa_assistant.domain.base import (
     AcceptanceCriterionId,
     DomainModel,
+    FindingId,
     IssueKey,
     NonEmptyStr,
     RiskId,
     RunId,
     TestCaseId,
 )
-from qa_assistant.domain.enums import Priority, Technique
+from qa_assistant.domain.enums import Priority, Readiness, Technique
 
 Label = Annotated[
     str,
@@ -44,16 +45,40 @@ class TestCaseDraft(DomainModel):
     steps: list[TestStep] = Field(min_length=1, max_length=50)
     priority: Priority
     technique: Technique
+    status: Readiness = Field(
+        description=(
+            "'ready' when every expected result is known from the story; "
+            "'clarification_required' when it depends on an unanswered question "
+            "(list those findings in open_question_ids). Only ready cases are exported."
+        )
+    )
     covers: list[AcceptanceCriterionId] = Field(
-        min_length=1, description="Acceptance criteria this test verifies"
+        default_factory=list,
+        description="Authoritative Jira acceptance criteria this test verifies",
     )
     risk_ids: list[RiskId] = Field(default_factory=list, description="Risks this test mitigates")
+    finding_ids: list[FindingId] = Field(
+        default_factory=list,
+        description="Requirement gaps / findings this test explores (not acceptance criteria)",
+    )
+    open_question_ids: list[FindingId] = Field(
+        default_factory=list,
+        description="Unanswered findings the expected results depend on; requires "
+        "status 'clarification_required'",
+    )
     labels: list[Label] = Field(default_factory=list)
     components: list[NonEmptyStr] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def _no_duplicate_refs(self) -> Self:
-        for name in ("covers", "risk_ids", "labels", "components"):
+        for name in (
+            "covers",
+            "risk_ids",
+            "finding_ids",
+            "open_question_ids",
+            "labels",
+            "components",
+        ):
             values: list[str] = getattr(self, name)
             if len(values) != len(set(values)):
                 raise ValueError(f"{name} contains duplicates")

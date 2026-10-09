@@ -1,0 +1,105 @@
+{
+  "id": "crm_campaign_personalisation",
+  "title": "Personalised CRM campaign with communication rules",
+  "domain": "crm",
+  "measures": [
+    "regulatory risk traceability",
+    "decision table over communication rules",
+    "time-zone ambiguity blocks only the cases it affects"
+  ],
+  "checks": [
+    "expected_findings",
+    "ready_acs",
+    "expected_blocked",
+    "applicable_techniques"
+  ],
+  "story": {
+    "key": "DEMO-213",
+    "url": "https://jira.example.com/browse/DEMO-213",
+    "summary": "Marketing manager sends a personalised campaign message",
+    "issue_type": "Story",
+    "status": "Ready for QA",
+    "priority": "Medium",
+    "labels": [
+      "crm",
+      "campaigns"
+    ],
+    "components": [
+      "CRM"
+    ],
+    "description": "As a marketing manager I want campaign messages to address each recipient personally while respecting communication preferences and responsible-gaming rules.\n\n## Acceptance Criteria\n- A campaign message can contain the placeholders {first_name} and {bonus_amount}, which are replaced with the recipient's values when the message is sent.\n- If a recipient has no first name, {first_name} is replaced with \"Player\".\n- Recipients who opted out of marketing communication are excluded from the campaign audience.\n- Recipients with an active self-exclusion are never sent promotional messages.\n- A recipient receives at most one message from the same campaign per calendar day.",
+    "acceptance_criteria": [
+      {
+        "id": "AC-1",
+        "text": "A campaign message can contain the placeholders {first_name} and {bonus_amount}, which are replaced with the recipient's values when the message is sent.",
+        "source": "description"
+      },
+      {
+        "id": "AC-2",
+        "text": "If a recipient has no first name, {first_name} is replaced with \"Player\".",
+        "source": "description"
+      },
+      {
+        "id": "AC-3",
+        "text": "Recipients who opted out of marketing communication are excluded from the campaign audience.",
+        "source": "description"
+      },
+      {
+        "id": "AC-4",
+        "text": "Recipients with an active self-exclusion are never sent promotional messages.",
+        "source": "description"
+      },
+      {
+        "id": "AC-5",
+        "text": "A recipient receives at most one message from the same campaign per calendar day.",
+        "source": "description"
+      }
+    ],
+    "links": [],
+    "subtasks": [],
+    "comments": [],
+    "fetched_at": "2026-10-01T09:00:00Z"
+  },
+  "reference": {
+    "expected_findings": [
+      {
+        "kinds": [
+          "missing_requirement",
+          "question",
+          "ambiguity"
+        ],
+        "related_ac_ids": [
+          "AC-5"
+        ],
+        "why": "'calendar day' has no time zone"
+      }
+    ],
+    "ready_acs": "all",
+    "expected_blocked": [
+      {
+        "kinds": [
+          "missing_requirement",
+          "question",
+          "ambiguity"
+        ],
+        "related_ac_ids": [
+          "AC-5"
+        ],
+        "why": "sends around midnight depend on the time zone"
+      }
+    ],
+    "applicable_techniques": [
+      {
+        "technique": "decision_table",
+        "ac_ids": [
+          "AC-4"
+        ],
+        "why": "opt-in and self-exclusion combine into one outcome"
+      }
+    ],
+    "known_risks": [
+      "self-excluded player contacted",
+      "raw placeholders delivered"
+    ]
+  }
+}

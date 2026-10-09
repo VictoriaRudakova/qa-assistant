@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from typing import NoReturn
 
 import httpx
@@ -10,9 +11,12 @@ from qa_assistant.config.settings import JiraDeployment, JiraSettings
 from qa_assistant.domain.story import JiraStory, StorySearchPage
 from qa_assistant.errors import NotConfiguredError, QAAssistantError
 from qa_assistant.jira.client import HttpJiraClient
+from qa_assistant.jira.fixtures import FixtureJiraClient
 from qa_assistant.jira.http import BearerAuth, JiraHttp
 from qa_assistant.jira.ports import JiraClient
 from qa_assistant.jira.scoping import ProjectScopedJiraClient
+
+logger = logging.getLogger(__name__)
 
 
 class UnavailableJiraClient:
@@ -63,7 +67,19 @@ def build_jira_client(
     """Return a project-scoped read-only client, or an unavailable stand-in if not configured.
 
     ``transport`` is for tests (``httpx.MockTransport``); production uses the network.
+    ``JIRA_FIXTURES_DIR`` (evals only) selects the offline fixture client instead.
     """
+    if settings.fixtures_dir is not None:
+        if settings.project_key is None:
+            return UnavailableJiraClient(
+                NotConfiguredError("JIRA_FIXTURES_DIR needs JIRA_PROJECT_KEY.")
+            )
+        logger.warning("Serving Jira stories from fixtures in %s", settings.fixtures_dir)
+        return ProjectScopedJiraClient(
+            FixtureJiraClient(settings.fixtures_dir.resolve()),
+            settings.project_key,
+            max_search_results=settings.max_search_results,
+        )
     missing = settings.missing_settings()
     if (
         missing

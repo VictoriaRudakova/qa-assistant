@@ -11,7 +11,10 @@ The CSV is produced only by the `export_xray_csv` MCP tool from validated, store
 Never write or edit CSV yourself.
 
 1. Call `validate_test_cases` for the run (and revision, if given). If `valid` is false, list
-   the errors and stop; suggest `/design-test-cases` or `/review-test-cases`.
+   the errors and stop; suggest `/design-test-cases` or `/review-test-cases`. If
+   `export_ready` is false, list the `clarification_required` cases and their open
+   questions; export them only after the PO answers, or export the ready cases with
+   `ready_only=true` if the user explicitly asks for that.
 2. Show the warnings and ask the user to confirm the export.
 3. Call `export_xray_csv`. Report `path`, `rows`, `test_case_count`, `sha256`, `mapping_name`
    and every warning. If the mapping is the synthetic placeholder, state clearly that the

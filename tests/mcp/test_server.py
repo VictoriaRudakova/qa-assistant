@@ -39,7 +39,11 @@ EXPECTED_TOOLS = {
     "validate_test_cases",
     "export_xray_csv",
     "get_run",
+    "get_story_analysis",
+    "list_test_cases",
+    "get_test_cases",
     "list_runs",
+    "get_coverage",
 }
 
 
@@ -52,9 +56,10 @@ def anyio_backend() -> str:
 def server(
     store: RunStore, fake_jira: FakeJiraClient, synthetic_mapping: XrayCsvMapping
 ) -> MCPServer:
+    jira = ProjectScopedJiraClient(fake_jira, "DEMO", max_search_results=50)
     deps = ServerDependencies(
-        jira=ProjectScopedJiraClient(fake_jira, "DEMO", max_search_results=50),
-        runs=RunService(store),
+        jira=jira,
+        runs=RunService(store, jira),
         export=ExportService(store, MappedXrayCsvExporter(synthetic_mapping)),
     )
     return create_server(deps)
@@ -96,7 +101,11 @@ async def test_tool_names_and_annotations(client: Client) -> None:
         "jira_search_stories",
         "validate_test_cases",
         "get_run",
+        "get_story_analysis",
+        "list_test_cases",
+        "get_test_cases",
         "list_runs",
+        "get_coverage",
     }
     assert not any(t.annotations and t.annotations.destructive_hint for t in tools.values())
 
@@ -145,24 +154,83 @@ async def test_end_to_end_story_to_csv(client: Client) -> None:
 
 
 @pytest.mark.anyio
-async def test_get_run_returns_analysis_and_latest_test_cases(client: Client) -> None:
+async def test_run_is_read_in_sections(client: Client) -> None:
     analysis = load_json("analysis/DEMO-101.analysis.json")
     run_id = (await call_ok(client, "submit_story_analysis", {"analysis": analysis}))["run_id"]
 
-    empty = await client.call_tool("get_run", {"run_id": run_id})
-    assert isinstance(empty, CallToolResult)
-    assert not empty.is_error
-    assert json.loads(text_of(empty))["test_cases"] is None
+    empty = await call_ok(client, "get_run", {"run_id": run_id})
+    assert (empty["revision"], empty["test_case_count"]) == (None, 0)
+    assert empty["acceptance_criterion_ids"] == ["AC-1", "AC-2", "AC-3", "AC-4"]
+
+    result = await client.call_tool("get_story_analysis", {"run_id": run_id})
+    assert isinstance(result, CallToolResult)
+    assert not result.is_error, text_of(result)
+    stored = json.loads(text_of(result))
+    assert [r["severity"] for r in stored["risks"]] == ["high", "medium"]
 
     drafts = load_json("test_cases/DEMO-101.drafts.json")
     await call_ok(client, "submit_test_cases", {"run_id": run_id, "test_cases": drafts})
-    result = await client.call_tool("get_run", {"run_id": run_id})
-    assert isinstance(result, CallToolResult)
-    assert not result.is_error, text_of(result)
-    details = json.loads(text_of(result))
-    assert details["manifest"]["latest_revision"] == 1
-    assert [r["severity"] for r in details["analysis"]["risks"]] == ["high", "medium"]
-    assert details["test_cases"]["test_cases"][0]["id"] == "TC-001"
+    overview = await call_ok(client, "get_run", {"run_id": run_id})
+    assert (overview["revision"], overview["test_case_count"], overview["ready_count"]) == (1, 5, 5)
+
+    index = await call_ok(client, "list_test_cases", {"run_id": run_id, "limit": 3})
+    assert [i["id"] for i in index["items"]] == ["TC-001", "TC-002", "TC-003"]
+    assert index["next_offset"] == 3
+    assert "steps" not in index["items"][0]
+
+    page = await call_ok(client, "get_test_cases", {"run_id": run_id, "offset": 3})
+    assert [tc["id"] for tc in page["test_cases"]] == ["TC-004", "TC-005"]
+    assert page["test_cases"][0]["steps"]
+    chosen = await call_ok(client, "get_test_cases", {"run_id": run_id, "ids": ["TC-002"]})
+    assert [tc["id"] for tc in chosen["test_cases"]] == ["TC-002"]
+
+    coverage = await call_ok(client, "get_coverage", {"run_id": run_id})
+    assert coverage["acceptance_criteria"]["AC-2"] == ["TC-002", "TC-003"]
+    assert coverage["acceptance_criteria_ready"] == coverage["acceptance_criteria"]
+    assert set(coverage["findings"]) == {"F-1", "F-2"}
+    assert set(coverage["risks"]) == {"R-1", "R-2"}
+    assert coverage["uncovered_ac_ids"] == []
+    assert "issues" not in coverage
+
+
+@pytest.mark.anyio
+async def test_analysis_with_invented_acceptance_criterion_is_rejected(client: Client) -> None:
+    analysis = load_json("analysis/DEMO-101.analysis.json")
+    analysis["acceptance_criteria"].append(
+        {"id": "AC-5", "text": "Invented criterion.", "source": "description"}
+    )
+    message = await call_error(client, "submit_story_analysis", {"analysis": analysis})
+    assert "[invalid_artifact]" in message
+    assert "AC-5 is not in Jira" in message
+
+
+@pytest.mark.anyio
+async def test_export_blocked_while_clarification_required(client: Client) -> None:
+    analysis = load_json("analysis/DEMO-101.analysis.json")
+    run_id = (await call_ok(client, "submit_story_analysis", {"analysis": analysis}))["run_id"]
+    drafts = load_json("test_cases/DEMO-101.drafts.json")
+    drafts.append(
+        {
+            **drafts[2],
+            "title": "Reused reset link follows the agreed rule",
+            "status": "clarification_required",
+            "covers": [],
+            "finding_ids": ["F-1"],
+            "open_question_ids": ["F-1"],
+        }
+    )
+    submitted = await call_ok(client, "submit_test_cases", {"run_id": run_id, "test_cases": drafts})
+    report = submitted["report"]
+    assert (report["valid"], report["export_ready"]) == (True, False)
+    assert report["clarification_required_test_case_ids"] == ["TC-006"]
+    assert report["finding_coverage"]["F-1"] == ["TC-006"]
+
+    message = await call_error(client, "export_xray_csv", {"run_id": run_id})
+    assert "[export_blocked]" in message
+    assert "CLARIFICATION_REQUIRED" in message
+    exported = await call_ok(client, "export_xray_csv", {"run_id": run_id, "ready_only": True})
+    assert exported["excluded_test_case_ids"] == ["TC-006"]
+    assert exported["test_case_count"] == 5
 
 
 @pytest.mark.anyio
@@ -182,6 +250,10 @@ async def test_search_is_project_scoped(client: Client, fake_jira: FakeJiraClien
         ("validate_test_cases", {"run_id": "20261005T120000Z-ffffff"}, "[not_found]"),
         ("validate_test_cases", {"run_id": "../../etc"}, "pattern"),
         ("export_xray_csv", {"run_id": "20261005T120000Z-ffffff"}, "[not_found]"),
+        ("get_run", {"run_id": "20261005T120000Z-ffffff"}, "[not_found]"),
+        ("get_test_cases", {"run_id": "20261005T120000Z-ffffff"}, "[not_found]"),
+        ("list_test_cases", {"run_id": "20261005T120000Z-ffffff", "limit": 101}, "100"),
+        ("get_test_cases", {"run_id": "20261005T120000Z-ffffff", "limit": 26}, "25"),
     ],
 )
 async def test_errors_are_reported_to_the_model(

@@ -1,0 +1,449 @@
+{
+  "description": "Negative control: a case with an unverifiable expected result and a copy of an existing case under another title.",
+  "analysis": {
+    "story_key": "DEMO-214",
+    "summary": "Role check, authentication, name validation, status-dependent updates and not-found handling. Order of the 403 and 404 checks is unspecified.",
+    "requirements": [],
+    "acceptance_criteria": [
+      {
+        "id": "AC-1",
+        "text": "PATCH /api/promotions/{id} requires the role promotion_editor; callers without it receive HTTP 403 and the promotion is unchanged.",
+        "source": "description"
+      },
+      {
+        "id": "AC-2",
+        "text": "Unauthenticated requests receive HTTP 401.",
+        "source": "description"
+      },
+      {
+        "id": "AC-3",
+        "text": "The field name is required and must be 3 to 80 characters long; violations return HTTP 422 with the field name in the error body.",
+        "source": "description"
+      },
+      {
+        "id": "AC-4",
+        "text": "Only promotions in Draft or Scheduled status can be updated; updating an Active or Ended promotion returns HTTP 409.",
+        "source": "description"
+      },
+      {
+        "id": "AC-5",
+        "text": "A request for a promotion id that does not exist returns HTTP 404.",
+        "source": "description"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F-1",
+        "kind": "ambiguity",
+        "text": "Does a caller without promotion_editor get 403 or 404 for a promotion id that does not exist?",
+        "related_ac_ids": [
+          "AC-1",
+          "AC-5"
+        ]
+      },
+      {
+        "id": "F-2",
+        "kind": "missing_requirement",
+        "text": "Are leading and trailing spaces counted in the length and is the name trimmed?",
+        "related_ac_ids": [
+          "AC-3"
+        ]
+      },
+      {
+        "id": "F-3",
+        "kind": "question",
+        "text": "Can a Scheduled promotion be updated after its start time but before the scheduler activates it?",
+        "related_ac_ids": [
+          "AC-4"
+        ]
+      }
+    ],
+    "risks": [
+      {
+        "id": "R-1",
+        "title": "Privilege escalation",
+        "description": "Callers without the role can modify promotions.",
+        "category": "security",
+        "likelihood": "medium",
+        "impact": "high",
+        "related_ac_ids": [
+          "AC-1"
+        ]
+      },
+      {
+        "id": "R-2",
+        "title": "Live promotion modified",
+        "description": "Active promotions change while players use them.",
+        "category": "functional",
+        "likelihood": "medium",
+        "impact": "high",
+        "related_ac_ids": [
+          "AC-4"
+        ]
+      },
+      {
+        "id": "R-3",
+        "title": "Existence disclosure",
+        "description": "403 vs 404 reveals which promotion ids exist.",
+        "category": "security",
+        "likelihood": "low",
+        "impact": "medium",
+        "related_ac_ids": [
+          "AC-1",
+          "AC-5"
+        ]
+      }
+    ],
+    "assumptions": [],
+    "out_of_scope": []
+  },
+  "test_cases": [
+    {
+      "title": "An editor renames a Draft promotion",
+      "objective": "AC-1 allowed role.",
+      "preconditions": [
+        "Promotion 501 exists in Draft status with name 'Spring deposit bonus'"
+      ],
+      "steps": [
+        {
+          "action": "PATCH /api/promotions/501 with name 'Summer bonus' as a promotion_editor.",
+          "expected_result": "The response status is 2xx."
+        },
+        {
+          "action": "GET /api/promotions/501.",
+          "expected_result": "The name is 'Summer bonus'."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-1"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Promotions API"
+      ]
+    },
+    {
+      "title": "A caller without promotion_editor gets 403 and nothing changes",
+      "objective": "AC-1 denied role.",
+      "preconditions": [
+        "Promotion 501 exists in Draft status with name 'Spring deposit bonus'"
+      ],
+      "steps": [
+        {
+          "action": "PATCH /api/promotions/501 with name 'Summer bonus' as a promotion_viewer.",
+          "expected_result": "The response status is 403."
+        },
+        {
+          "action": "GET /api/promotions/501 as an editor.",
+          "expected_result": "The name is still 'Spring deposit bonus'."
+        }
+      ],
+      "status": "ready",
+      "priority": "high",
+      "technique": "negative",
+      "covers": [
+        "AC-1"
+      ],
+      "risk_ids": [
+        "R-1"
+      ],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Promotions API"
+      ]
+    },
+    {
+      "title": "An unauthenticated request gets 401",
+      "objective": "AC-2.",
+      "preconditions": [
+        "Promotion 501 exists in Draft status with name 'Spring deposit bonus'"
+      ],
+      "steps": [
+        {
+          "action": "PATCH /api/promotions/501 with name 'Summer bonus' and no credentials.",
+          "expected_result": "The response status is 401."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-2"
+      ],
+      "risk_ids": [
+        "R-1"
+      ],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Promotions API"
+      ]
+    },
+    {
+      "title": "Names of 3 and 80 characters are accepted",
+      "objective": "AC-3 boundaries.",
+      "preconditions": [
+        "Promotion 501 exists in Draft status with name 'Spring deposit bonus'"
+      ],
+      "steps": [
+        {
+          "action": "PATCH name 'Abc' as an editor.",
+          "expected_result": "The response status is 2xx and the name is 'Abc'."
+        },
+        {
+          "action": "PATCH a name of 80 letters 'a' as an editor.",
+          "expected_result": "The response status is 2xx and the stored name has 80 characters."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "boundary_value",
+      "covers": [
+        "AC-3"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Promotions API"
+      ]
+    },
+    {
+      "title": "Names of 2 and 81 characters return 422 naming the field",
+      "objective": "AC-3 just outside the boundaries.",
+      "preconditions": [
+        "Promotion 501 exists in Draft status with name 'Spring deposit bonus'"
+      ],
+      "steps": [
+        {
+          "action": "PATCH name 'Ab' as an editor.",
+          "expected_result": "The response status is 422 and the error body names the field name."
+        },
+        {
+          "action": "PATCH a name of 81 letters 'a' as an editor.",
+          "expected_result": "The response status is 422 and the error body names the field name."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "boundary_value",
+      "covers": [
+        "AC-3"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Promotions API"
+      ]
+    },
+    {
+      "title": "A missing name returns 422",
+      "objective": "AC-3 required field.",
+      "preconditions": [
+        "Promotion 501 exists in Draft status with name 'Spring deposit bonus'"
+      ],
+      "steps": [
+        {
+          "action": "PATCH /api/promotions/501 with an empty JSON body as an editor.",
+          "expected_result": "The response status is 422 and the error body names the field name."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-3"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Promotions API"
+      ]
+    },
+    {
+      "title": "Only Draft and Scheduled promotions can be renamed",
+      "objective": "AC-4 status transitions.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "PATCH a Scheduled promotion's name as an editor (start time in the future).",
+          "expected_result": "The response status is 2xx."
+        },
+        {
+          "action": "PATCH an Active promotion's name as an editor.",
+          "expected_result": "The response status is 409."
+        },
+        {
+          "action": "PATCH an Ended promotion's name as an editor.",
+          "expected_result": "The response status is 409."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "state_transition",
+      "covers": [
+        "AC-4"
+      ],
+      "risk_ids": [
+        "R-2"
+      ],
+      "finding_ids": [
+        "F-3"
+      ],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Promotions API"
+      ]
+    },
+    {
+      "title": "An editor gets 404 for an unknown promotion id",
+      "objective": "AC-5 with an authorised caller.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "PATCH /api/promotions/999999 with name 'Summer bonus' as an editor.",
+          "expected_result": "The response status is 404."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-5"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Promotions API"
+      ]
+    },
+    {
+      "title": "An unauthorised caller requests an unknown promotion id",
+      "objective": "AC-1 vs AC-5 ordering; depends on F-1.",
+      "preconditions": [],
+      "steps": [
+        {
+          "action": "PATCH /api/promotions/999999 as a promotion_viewer.",
+          "expected_result": "The status follows the PO answer to F-1 (403 or 404)."
+        }
+      ],
+      "status": "clarification_required",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-1",
+        "AC-5"
+      ],
+      "risk_ids": [
+        "R-3"
+      ],
+      "finding_ids": [
+        "F-1"
+      ],
+      "open_question_ids": [
+        "F-1"
+      ],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Promotions API"
+      ]
+    },
+    {
+      "title": "Rename works for editors",
+      "objective": "AC-1 restated vaguely.",
+      "preconditions": [
+        "Promotion 501 exists in Draft status with name 'Spring deposit bonus'"
+      ],
+      "steps": [
+        {
+          "action": "PATCH /api/promotions/501 with name 'Summer bonus' as a promotion_editor.",
+          "expected_result": "works as expected"
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "positive",
+      "covers": [
+        "AC-1"
+      ],
+      "risk_ids": [],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Promotions API"
+      ]
+    },
+    {
+      "title": "Request without a token is unauthorised",
+      "objective": "AC-2.",
+      "preconditions": [
+        "Promotion 501 exists in Draft status with name 'Spring deposit bonus'"
+      ],
+      "steps": [
+        {
+          "action": "PATCH /api/promotions/501 with name 'Summer bonus' and no credentials.",
+          "expected_result": "The response status is 401."
+        }
+      ],
+      "status": "ready",
+      "priority": "medium",
+      "technique": "negative",
+      "covers": [
+        "AC-2"
+      ],
+      "risk_ids": [
+        "R-1"
+      ],
+      "finding_ids": [],
+      "open_question_ids": [],
+      "labels": [
+        "eval"
+      ],
+      "components": [
+        "Promotions API"
+      ]
+    }
+  ],
+  "expected_failed_checks": [
+    "observable_results",
+    "redundancy"
+  ]
+}

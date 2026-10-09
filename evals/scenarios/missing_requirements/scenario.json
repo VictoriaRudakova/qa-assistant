@@ -1,0 +1,89 @@
+{
+  "id": "missing_requirements",
+  "title": "Story with missing requirements",
+  "domain": "e-commerce",
+  "measures": [
+    "requirement gaps recorded as findings, not ACs",
+    "clarification-required tests",
+    "reviewer findings"
+  ],
+  "checks": [
+    "expected_findings",
+    "expected_blocked"
+  ],
+  "story": {
+    "key": "DEMO-202",
+    "url": "https://jira.example.com/browse/DEMO-202",
+    "summary": "Shopper applies a discount coupon at checkout",
+    "issue_type": "Story",
+    "status": "Ready for QA",
+    "priority": "Medium",
+    "labels": [
+      "shop"
+    ],
+    "components": [
+      "Checkout"
+    ],
+    "description": "As a shopper I want to use a coupon so that I pay less.\n\n## Acceptance Criteria\n- A shopper can enter a coupon code on the checkout page.\n- A valid coupon reduces the order total.\n- An invalid coupon shows an error message.",
+    "acceptance_criteria": [
+      {
+        "id": "AC-1",
+        "text": "A shopper can enter a coupon code on the checkout page.",
+        "source": "description"
+      },
+      {
+        "id": "AC-2",
+        "text": "A valid coupon reduces the order total.",
+        "source": "description"
+      },
+      {
+        "id": "AC-3",
+        "text": "An invalid coupon shows an error message.",
+        "source": "description"
+      }
+    ],
+    "links": [],
+    "subtasks": [],
+    "comments": [],
+    "fetched_at": "2026-10-01T09:00:00Z"
+  },
+  "reference": {
+    "expected_findings": [
+      {
+        "kinds": [
+          "missing_requirement",
+          "question",
+          "ambiguity"
+        ],
+        "related_ac_ids": [
+          "AC-2"
+        ],
+        "why": "AC-2 says a valid coupon reduces the total but not by how much"
+      },
+      {
+        "kinds": [
+          "missing_requirement",
+          "question",
+          "ambiguity"
+        ],
+        "related_ac_ids": [
+          "AC-3"
+        ],
+        "why": "what makes a coupon invalid is not specified"
+      }
+    ],
+    "expected_blocked": [
+      {
+        "kinds": [
+          "missing_requirement",
+          "question",
+          "ambiguity"
+        ],
+        "related_ac_ids": [
+          "AC-2"
+        ],
+        "why": "the discount amount a valid coupon applies is unknown"
+      }
+    ]
+  }
+}

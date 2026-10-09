@@ -1,0 +1,114 @@
+{
+  "id": "tiered_promotion_configuration",
+  "title": "Tiered deposit promotion configuration",
+  "domain": "bonus engine",
+  "measures": [
+    "numeric and count boundaries",
+    "ordering validation",
+    "state transition",
+    "answer-independent ready case next to a justified blocked case"
+  ],
+  "checks": [
+    "expected_findings",
+    "ready_acs",
+    "expected_blocked",
+    "applicable_techniques"
+  ],
+  "story": {
+    "key": "DEMO-210",
+    "url": "https://jira.example.com/browse/DEMO-210",
+    "summary": "Promotion manager configures a tiered deposit promotion",
+    "issue_type": "Story",
+    "status": "Ready for QA",
+    "priority": "Medium",
+    "labels": [
+      "bonus",
+      "promotions"
+    ],
+    "components": [
+      "Bonus Engine"
+    ],
+    "description": "As a promotion manager I want to configure deposit tiers so that larger deposits earn a larger bonus.\n\n## Acceptance Criteria\n- A tiered promotion has between 1 and 5 tiers.\n- Each tier defines a minimum qualifying deposit and a bonus percentage from 1 to 200.\n- Tier minimum deposits must be strictly increasing; saving tiers that are not in increasing order is rejected with a validation error.\n- A player who qualifies for several tiers receives the bonus of the highest tier reached only.\n- A tiered promotion cannot be activated while it has no tiers.",
+    "acceptance_criteria": [
+      {
+        "id": "AC-1",
+        "text": "A tiered promotion has between 1 and 5 tiers.",
+        "source": "description"
+      },
+      {
+        "id": "AC-2",
+        "text": "Each tier defines a minimum qualifying deposit and a bonus percentage from 1 to 200.",
+        "source": "description"
+      },
+      {
+        "id": "AC-3",
+        "text": "Tier minimum deposits must be strictly increasing; saving tiers that are not in increasing order is rejected with a validation error.",
+        "source": "description"
+      },
+      {
+        "id": "AC-4",
+        "text": "A player who qualifies for several tiers receives the bonus of the highest tier reached only.",
+        "source": "description"
+      },
+      {
+        "id": "AC-5",
+        "text": "A tiered promotion cannot be activated while it has no tiers.",
+        "source": "description"
+      }
+    ],
+    "links": [],
+    "subtasks": [],
+    "comments": [],
+    "fetched_at": "2026-10-01T09:00:00Z"
+  },
+  "reference": {
+    "expected_findings": [
+      {
+        "kinds": [
+          "missing_requirement",
+          "question",
+          "ambiguity"
+        ],
+        "related_ac_ids": [
+          "AC-4"
+        ],
+        "why": "'tier reached' can be per deposit or cumulative"
+      }
+    ],
+    "ready_acs": "all",
+    "expected_blocked": [
+      {
+        "kinds": [
+          "missing_requirement",
+          "question",
+          "ambiguity"
+        ],
+        "related_ac_ids": [
+          "AC-4"
+        ],
+        "why": "a multi-deposit expectation depends on that answer"
+      }
+    ],
+    "applicable_techniques": [
+      {
+        "technique": "boundary_value",
+        "ac_ids": [
+          "AC-1",
+          "AC-2"
+        ],
+        "why": "AC-1 and AC-2 define numeric ranges"
+      },
+      {
+        "technique": "state_transition",
+        "ac_ids": [
+          "AC-5"
+        ],
+        "why": "AC-5 guards the Draft to Active transition"
+      }
+    ],
+    "known_risks": [
+      "wrong tier awarded",
+      "unordered tiers stored"
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "description": "Negative control: the designer stopped after 102 cases (ACs 35-40 uncovered).",
+  "extends": "reference",
+  "keep_test_cases": 102,
+  "expected_failed_checks": [
+    "ac_coverage",
+    "ready_acs",
+    "validation"
+  ]
+}

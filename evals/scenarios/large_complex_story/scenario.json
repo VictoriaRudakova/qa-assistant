@@ -1,0 +1,238 @@
+{
+  "id": "large_complex_story",
+  "title": "Large story (40 acceptance criteria, 120 test cases)",
+  "domain": "catalogue search",
+  "measures": [
+    "AC preservation at scale",
+    "AC coverage at scale",
+    "bounded paged reads",
+    "validation"
+  ],
+  "checks": [
+    "ready_acs"
+  ],
+  "story": {
+    "key": "DEMO-206",
+    "url": "https://jira.example.com/browse/DEMO-206",
+    "summary": "Shopper filters the product catalogue",
+    "issue_type": "Story",
+    "status": "Ready for QA",
+    "priority": "Medium",
+    "labels": [
+      "shop"
+    ],
+    "components": [
+      "Catalogue"
+    ],
+    "description": "As a shopper I want to filter the catalogue by product attributes.\n\n## Acceptance Criteria\n- Filtering the catalogue by brand \"Brand A\" shows only products with that brand.\n- Filtering the catalogue by brand \"Brand B\" shows only products with that brand.\n- Filtering the catalogue by brand \"Brand C\" shows only products with that brand.\n- Filtering the catalogue by brand \"Brand D\" shows only products with that brand.\n- Filtering the catalogue by brand \"Brand E\" shows only products with that brand.\n- Filtering the catalogue by colour \"Colour A\" shows only products with that colour.\n- Filtering the catalogue by colour \"Colour B\" shows only products with that colour.\n- Filtering the catalogue by colour \"Colour C\" shows only products with that colour.\n- Filtering the catalogue by colour \"Colour D\" shows only products with that colour.\n- Filtering the catalogue by colour \"Colour E\" shows only products with that colour.\n- Filtering the catalogue by size \"Size A\" shows only products with that size.\n- Filtering the catalogue by size \"Size B\" shows only products with that size.\n- Filtering the catalogue by size \"Size C\" shows only products with that size.\n- Filtering the catalogue by size \"Size D\" shows only products with that size.\n- Filtering the catalogue by size \"Size E\" shows only products with that size.\n- Filtering the catalogue by material \"Material A\" shows only products with that material.\n- Filtering the catalogue by material \"Material B\" shows only products with that material.\n- Filtering the catalogue by material \"Material C\" shows only products with that material.\n- Filtering the catalogue by material \"Material D\" shows only products with that material.\n- Filtering the catalogue by material \"Material E\" shows only products with that material.\n- Filtering the catalogue by price band \"Price Band A\" shows only products with that price band.\n- Filtering the catalogue by price band \"Price Band B\" shows only products with that price band.\n- Filtering the catalogue by price band \"Price Band C\" shows only products with that price band.\n- Filtering the catalogue by price band \"Price Band D\" shows only products with that price band.\n- Filtering the catalogue by price band \"Price Band E\" shows only products with that price band.\n- Filtering the catalogue by rating \"Rating A\" shows only products with that rating.\n- Filtering the catalogue by rating \"Rating B\" shows only products with that rating.\n- Filtering the catalogue by rating \"Rating C\" shows only products with that rating.\n- Filtering the catalogue by rating \"Rating D\" shows only products with that rating.\n- Filtering the catalogue by rating \"Rating E\" shows only products with that rating.\n- Filtering the catalogue by delivery time \"Delivery Time A\" shows only products with that delivery time.\n- Filtering the catalogue by delivery time \"Delivery Time B\" shows only products with that delivery time.\n- Filtering the catalogue by delivery time \"Delivery Time C\" shows only products with that delivery time.\n- Filtering the catalogue by delivery time \"Delivery Time D\" shows only products with that delivery time.\n- Filtering the catalogue by delivery time \"Delivery Time E\" shows only products with that delivery time.\n- Filtering the catalogue by seller \"Seller A\" shows only products with that seller.\n- Filtering the catalogue by seller \"Seller B\" shows only products with that seller.\n- Filtering the catalogue by seller \"Seller C\" shows only products with that seller.\n- Filtering the catalogue by seller \"Seller D\" shows only products with that seller.\n- Filtering the catalogue by seller \"Seller E\" shows only products with that seller.",
+    "acceptance_criteria": [
+      {
+        "id": "AC-1",
+        "text": "Filtering the catalogue by brand \"Brand A\" shows only products with that brand.",
+        "source": "description"
+      },
+      {
+        "id": "AC-2",
+        "text": "Filtering the catalogue by brand \"Brand B\" shows only products with that brand.",
+        "source": "description"
+      },
+      {
+        "id": "AC-3",
+        "text": "Filtering the catalogue by brand \"Brand C\" shows only products with that brand.",
+        "source": "description"
+      },
+      {
+        "id": "AC-4",
+        "text": "Filtering the catalogue by brand \"Brand D\" shows only products with that brand.",
+        "source": "description"
+      },
+      {
+        "id": "AC-5",
+        "text": "Filtering the catalogue by brand \"Brand E\" shows only products with that brand.",
+        "source": "description"
+      },
+      {
+        "id": "AC-6",
+        "text": "Filtering the catalogue by colour \"Colour A\" shows only products with that colour.",
+        "source": "description"
+      },
+      {
+        "id": "AC-7",
+        "text": "Filtering the catalogue by colour \"Colour B\" shows only products with that colour.",
+        "source": "description"
+      },
+      {
+        "id": "AC-8",
+        "text": "Filtering the catalogue by colour \"Colour C\" shows only products with that colour.",
+        "source": "description"
+      },
+      {
+        "id": "AC-9",
+        "text": "Filtering the catalogue by colour \"Colour D\" shows only products with that colour.",
+        "source": "description"
+      },
+      {
+        "id": "AC-10",
+        "text": "Filtering the catalogue by colour \"Colour E\" shows only products with that colour.",
+        "source": "description"
+      },
+      {
+        "id": "AC-11",
+        "text": "Filtering the catalogue by size \"Size A\" shows only products with that size.",
+        "source": "description"
+      },
+      {
+        "id": "AC-12",
+        "text": "Filtering the catalogue by size \"Size B\" shows only products with that size.",
+        "source": "description"
+      },
+      {
+        "id": "AC-13",
+        "text": "Filtering the catalogue by size \"Size C\" shows only products with that size.",
+        "source": "description"
+      },
+      {
+        "id": "AC-14",
+        "text": "Filtering the catalogue by size \"Size D\" shows only products with that size.",
+        "source": "description"
+      },
+      {
+        "id": "AC-15",
+        "text": "Filtering the catalogue by size \"Size E\" shows only products with that size.",
+        "source": "description"
+      },
+      {
+        "id": "AC-16",
+        "text": "Filtering the catalogue by material \"Material A\" shows only products with that material.",
+        "source": "description"
+      },
+      {
+        "id": "AC-17",
+        "text": "Filtering the catalogue by material \"Material B\" shows only products with that material.",
+        "source": "description"
+      },
+      {
+        "id": "AC-18",
+        "text": "Filtering the catalogue by material \"Material C\" shows only products with that material.",
+        "source": "description"
+      },
+      {
+        "id": "AC-19",
+        "text": "Filtering the catalogue by material \"Material D\" shows only products with that material.",
+        "source": "description"
+      },
+      {
+        "id": "AC-20",
+        "text": "Filtering the catalogue by material \"Material E\" shows only products with that material.",
+        "source": "description"
+      },
+      {
+        "id": "AC-21",
+        "text": "Filtering the catalogue by price band \"Price Band A\" shows only products with that price band.",
+        "source": "description"
+      },
+      {
+        "id": "AC-22",
+        "text": "Filtering the catalogue by price band \"Price Band B\" shows only products with that price band.",
+        "source": "description"
+      },
+      {
+        "id": "AC-23",
+        "text": "Filtering the catalogue by price band \"Price Band C\" shows only products with that price band.",
+        "source": "description"
+      },
+      {
+        "id": "AC-24",
+        "text": "Filtering the catalogue by price band \"Price Band D\" shows only products with that price band.",
+        "source": "description"
+      },
+      {
+        "id": "AC-25",
+        "text": "Filtering the catalogue by price band \"Price Band E\" shows only products with that price band.",
+        "source": "description"
+      },
+      {
+        "id": "AC-26",
+        "text": "Filtering the catalogue by rating \"Rating A\" shows only products with that rating.",
+        "source": "description"
+      },
+      {
+        "id": "AC-27",
+        "text": "Filtering the catalogue by rating \"Rating B\" shows only products with that rating.",
+        "source": "description"
+      },
+      {
+        "id": "AC-28",
+        "text": "Filtering the catalogue by rating \"Rating C\" shows only products with that rating.",
+        "source": "description"
+      },
+      {
+        "id": "AC-29",
+        "text": "Filtering the catalogue by rating \"Rating D\" shows only products with that rating.",
+        "source": "description"
+      },
+      {
+        "id": "AC-30",
+        "text": "Filtering the catalogue by rating \"Rating E\" shows only products with that rating.",
+        "source": "description"
+      },
+      {
+        "id": "AC-31",
+        "text": "Filtering the catalogue by delivery time \"Delivery Time A\" shows only products with that delivery time.",
+        "source": "description"
+      },
+      {
+        "id": "AC-32",
+        "text": "Filtering the catalogue by delivery time \"Delivery Time B\" shows only products with that delivery time.",
+        "source": "description"
+      },
+      {
+        "id": "AC-33",
+        "text": "Filtering the catalogue by delivery time \"Delivery Time C\" shows only products with that delivery time.",
+        "source": "description"
+      },
+      {
+        "id": "AC-34",
+        "text": "Filtering the catalogue by delivery time \"Delivery Time D\" shows only products with that delivery time.",
+        "source": "description"
+      },
+      {
+        "id": "AC-35",
+        "text": "Filtering the catalogue by delivery time \"Delivery Time E\" shows only products with that delivery time.",
+        "source": "description"
+      },
+      {
+        "id": "AC-36",
+        "text": "Filtering the catalogue by seller \"Seller A\" shows only products with that seller.",
+        "source": "description"
+      },
+      {
+        "id": "AC-37",
+        "text": "Filtering the catalogue by seller \"Seller B\" shows only products with that seller.",
+        "source": "description"
+      },
+      {
+        "id": "AC-38",
+        "text": "Filtering the catalogue by seller \"Seller C\" shows only products with that seller.",
+        "source": "description"
+      },
+      {
+        "id": "AC-39",
+        "text": "Filtering the catalogue by seller \"Seller D\" shows only products with that seller.",
+        "source": "description"
+      },
+      {
+        "id": "AC-40",
+        "text": "Filtering the catalogue by seller \"Seller E\" shows only products with that seller.",
+        "source": "description"
+      }
+    ],
+    "links": [],
+    "subtasks": [],
+    "comments": [],
+    "fetched_at": "2026-10-01T09:00:00Z"
+  },
+  "reference": {
+    "ready_acs": "all"
+  }
+}

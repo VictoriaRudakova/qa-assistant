@@ -27,6 +27,7 @@ from qa_assistant.errors import JiraRequestError
 from qa_assistant.jira.acceptance_criteria import extract_acceptance_criteria
 from qa_assistant.jira.http import JiraHttp
 from qa_assistant.jira.text import adf_to_text, wiki_to_text
+from qa_assistant.jira.untrusted import with_untrusted_flags
 
 STORY_FIELDS = (
     "summary",
@@ -121,7 +122,7 @@ class HttpJiraClient:
         fields = _mapping(data.get("fields"))
         description = self._rich_text(fields.get("description"))
         ac_value = self._rich_text(fields.get(self._ac_field)) if self._ac_field else None
-        return JiraStory(
+        story = JiraStory(
             key=key,
             url=self._browse + key,
             summary=_str(fields.get("summary")) or "(no summary)",
@@ -141,6 +142,7 @@ class HttpJiraClient:
             comments=self._comments(fields.get("comment")) if include_comments else [],
             fetched_at=self._clock(),
         )
+        return with_untrusted_flags(story)
 
     def _to_summary(self, data: Mapping[str, Any]) -> JiraStorySummary:
         fields = _mapping(data.get("fields"))

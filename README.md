@@ -53,9 +53,8 @@ All settings are environment variables (see `.env.example`):
 ## Development
 
 ```bash
-uv run pytest --cov
-uv run ruff check . && uv run ruff format --check .
-uv run mypy
+scripts/verify.sh            # lint, format, mypy, tests + coverage, evals, repository guards
+uv run python -m evals -v    # deterministic agent-output evals only
 ```
 
 See `CLAUDE.md` for architecture rules and `docs/` for the architecture, ADRs and features.
