@@ -52,6 +52,16 @@ SYSTEM_PROMPT = (
     "Never export."
 )
 SUBAGENTS = ("story-analyst", "test-designer", "test-reviewer")
+SUBMIT_TOOLS = ("submit_story_analysis", "submit_test_cases")
+READ_TOOLS = (
+    "jira_get_story",
+    "get_run",
+    "get_story_analysis",
+    "list_test_cases",
+    "get_test_cases",
+    "get_coverage",
+    "validate_test_cases",
+)
 
 # (command, environment, run directory) -> exit status. Replaced in tests.
 Runner = Callable[[list[str], dict[str, str], Path], int]
@@ -125,14 +135,21 @@ def run_live(
     scenario: Scenario,
     *,
     model: str | None = None,
+    subagent_model: str | None = None,
     root: Path = LIVE_ROOT,
     runner: Runner = _claude,
 ) -> EvalResult:
+    """``model`` sets the session model; ``subagent_model`` overrides every subagent's
+    model (``CLAUDE_CODE_SUBAGENT_MODEL``). The models actually used are recorded from the
+    transcript in ``usage``."""
     run_dir = prepare_run_dir(scenario, root)
     env = {**os.environ, "QA_SKIP_STOP_VERIFY": "1"}  # the session only writes to run_dir
+    if subagent_model:
+        env["CLAUDE_CODE_SUBAGENT_MODEL"] = subagent_model
     exit_status = runner(claude_command(scenario, run_dir, model), env, run_dir)
     agent = parse_transcript(run_dir / "transcript.jsonl")
     agent["exit_status"] = exit_status
+    agent["requested_models"] = {"session": model, "subagents": subagent_model}
     agent["run_dir"] = str(run_dir.relative_to(REPO) if run_dir.is_relative_to(REPO) else run_dir)
 
     runs = RunStore(run_dir / "output").list_runs(scenario.story.key)
@@ -173,11 +190,21 @@ def _tool_permissions_check(agent: dict[str, Any]) -> CheckResult:
 
 
 def parse_transcript(path: Path) -> dict[str, Any]:
-    """Structural metrics from a stream-json transcript (tool calls, errors, cost)."""
+    """Structural metrics from a stream-json transcript (tool calls, errors, cost).
+
+    ``usage`` holds what Claude Code itself reports: tokens and cost per model from the
+    final ``result`` event, and per subagent the model(s) its messages came from and the
+    token total, tool uses and duration of its ``task_notification``. ``payload_bytes``
+    are measured JSON sizes of tool requests and responses (bytes, not tokens). Only
+    names, counts and sizes are kept, never prompt or tool content.
+    """
     names: dict[str, str] = {}
     calls: Counter[str] = Counter()
     errors: Counter[str] = Counter()
     subagents: list[str] = []
+    agent_of: dict[str, str] = {}  # Agent tool_use id -> subagent type
+    agents: dict[str, dict[str, Any]] = {}
+    payload: dict[str, Counter[str]] = {}
     rejected_codes: set[str] = set()
     final: dict[str, Any] = {}
     lines = path.read_text(encoding="utf-8").splitlines() if path.exists() else []
@@ -188,19 +215,36 @@ def parse_transcript(path: Path) -> dict[str, Any]:
             continue
         if event.get("type") == "result":
             final = event
-        content = (event.get("message") or {}).get("content")
+        if event.get("subtype") == "task_notification":
+            usage = event.get("usage") or {}
+            stats = _agent_stats(agents, agent_of.get(event.get("tool_use_id", ""), "?"))
+            stats["total_tokens"] += usage.get("total_tokens", 0)
+            stats["tool_uses"] += usage.get("tool_uses", 0)
+            stats["duration_s"] += round(usage.get("duration_ms", 0) / 1000)
+        message = event.get("message") or {}
+        if event.get("type") == "assistant" and message.get("model"):
+            parent = event.get("parent_tool_use_id")
+            who = agent_of.get(parent, "?") if parent else "main"
+            _agent_stats(agents, who)["models"].add(message["model"])
+        content = message.get("content")
         for block in content if isinstance(content, list) else []:
             if block.get("type") == "tool_use":
                 name = str(block.get("name", "")).removeprefix(MCP_PREFIX)
                 names[block.get("id", "")] = name
                 calls[name] += 1
+                _count(payload, name, "request_bytes", block.get("input"))
                 if name in ("Agent", "Task"):
-                    subagents.append(str((block.get("input") or {}).get("subagent_type", "")))
-            elif block.get("type") == "tool_result" and block.get("is_error"):
+                    agent = str((block.get("input") or {}).get("subagent_type", ""))
+                    subagents.append(agent)
+                    agent_of[block.get("id", "")] = agent
+                    _agent_stats(agents, agent)["invocations"] += 1
+            elif block.get("type") == "tool_result":
                 name = names.get(block.get("tool_use_id", ""), "?")
-                errors[name] += 1
-                text = json.dumps(block.get("content"))
-                rejected_codes |= set(re.findall(r"\b(?:ANALYSIS|TC|AC)_[A-Z_]+\b", text))
+                _count(payload, name, "response_bytes", block.get("content"))
+                if block.get("is_error"):
+                    errors[name] += 1
+                    text = json.dumps(block.get("content"))
+                    rejected_codes |= set(re.findall(r"\b(?:ANALYSIS|TC|AC)_[A-Z_]+\b", text))
     return {
         "tool_calls": dict(calls),
         "tool_errors": dict(errors),
@@ -211,4 +255,92 @@ def parse_transcript(path: Path) -> dict[str, Any]:
         "num_turns": final.get("num_turns"),
         "duration_s": round(final.get("duration_ms", 0) / 1000),
         "cost_usd": final.get("total_cost_usd"),
+        "usage": {
+            "models": {
+                model: {
+                    "input_tokens": u.get("inputTokens", 0),
+                    "output_tokens": u.get("outputTokens", 0),
+                    "cache_read_input_tokens": u.get("cacheReadInputTokens", 0),
+                    "cache_creation_input_tokens": u.get("cacheCreationInputTokens", 0),
+                    "cost_usd": u.get("costUSD"),
+                }
+                for model, u in (final.get("modelUsage") or {}).items()
+            },
+            "agents": {
+                name: {**stats, "models": sorted(stats["models"])} for name, stats in agents.items()
+            },
+        },
+        "payload_bytes": {name: dict(sizes) for name, sizes in sorted(payload.items())},
     }
+
+
+def usage_table(root: Path = LIVE_ROOT, prefix: str | None = None) -> list[str]:
+    """Usage of recorded live runs, re-read from their transcripts (no agent is run).
+
+    Tokens and cost are Claude Code's own figures (``cost`` is its estimate at list prices);
+    KB columns are measured JSON payload sizes, not tokens.
+    """
+    head = (
+        f"{'run':46} {'models':18} {'input':>6} {'cache_w':>8} {'cache_r':>8} {'output':>7} "
+        f"{'cost$':>6} {'dur_s':>5} {'agents':>6} {'designer':>8} {'reviewer':>8} "
+        f"{'submit_KB':>9} {'read_KB':>7}"
+    )
+    rows = [head]
+    totals: Counter[str] = Counter()
+    count = 0
+    for path in sorted(root.glob("*/transcript.jsonl")):
+        name = path.parent.name
+        if prefix and not name.startswith(f"{prefix}-"):
+            continue
+        agent = parse_transcript(path)
+        models = agent["usage"]["models"]
+        if not models:
+            continue
+        count += 1
+        tokens: Counter[str] = Counter()
+        for u in models.values():
+            tokens.update({k: v for k, v in u.items() if k != "cost_usd"})
+        stats = agent["usage"]["agents"]
+        payload = agent["payload_bytes"]
+        submit = sum(payload.get(t, {}).get("request_bytes", 0) for t in SUBMIT_TOOLS)
+        read = sum(payload.get(t, {}).get("response_bytes", 0) for t in READ_TOOLS)
+        row = Counter(
+            {
+                **tokens,
+                "cost": agent["cost_usd"] or 0,
+                "duration": agent["duration_s"],
+                "agents": len(agent["subagents"]),
+                "designer": stats.get("test-designer", {}).get("total_tokens", 0),
+                "reviewer": stats.get("test-reviewer", {}).get("total_tokens", 0),
+                "submit": submit,
+                "read": read,
+            }
+        )
+        totals.update(row)
+        short = ",".join(sorted({m.removeprefix("claude-") for m in models}))
+        rows.append(_usage_row(name, short, row))
+    if count > 1:
+        mean = Counter({k: v / count for k, v in totals.items()})
+        rows.append(_usage_row(f"mean of {count} runs", "", mean))
+    return rows
+
+
+def _usage_row(name: str, models: str, r: Counter[str]) -> str:
+    return (
+        f"{name[:46]:46} {models[:18]:18} {r['input_tokens']:>6.0f} "
+        f"{r['cache_creation_input_tokens']:>8.0f} {r['cache_read_input_tokens']:>8.0f} "
+        f"{r['output_tokens']:>7.0f} {r['cost']:>6.2f} {r['duration']:>5.0f} "
+        f"{r['agents']:>6.0f} {r['designer']:>8.0f} {r['reviewer']:>8.0f} "
+        f"{r['submit'] / 1000:>9.1f} {r['read'] / 1000:>7.1f}"
+    )
+
+
+def _agent_stats(agents: dict[str, dict[str, Any]], name: str) -> dict[str, Any]:
+    return agents.setdefault(
+        name,
+        {"invocations": 0, "models": set(), "total_tokens": 0, "tool_uses": 0, "duration_s": 0},
+    )
+
+
+def _count(payload: dict[str, Counter[str]], name: str, key: str, value: object) -> None:
+    payload.setdefault(name, Counter())[key] += len(json.dumps(value))

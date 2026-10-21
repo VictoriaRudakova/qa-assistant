@@ -24,7 +24,7 @@ from qa_assistant.jira.ports import JiraClient
 from qa_assistant.storage.run_store import RunStore
 from qa_assistant.testdesign.coverage import build_coverage_report
 from qa_assistant.testdesign.ids import assign_ids
-from qa_assistant.testdesign.rules import validate_test_cases
+from qa_assistant.testdesign.rules import normalized_title, validate_test_cases
 
 INDEX_PAGE_MAX = 100
 CASE_PAGE_MAX = 25
@@ -73,20 +73,44 @@ class RunService:
             )
 
     def submit_test_cases(
-        self, run_id: str, drafts: Sequence[TestCaseDraft]
+        self,
+        run_id: str,
+        drafts: Sequence[TestCaseDraft],
+        *,
+        keep_ids: Sequence[str] = (),
+        keep_from_revision: int | None = None,
     ) -> SubmitTestCasesResult:
         """Store a new revision of test cases and return its validation report.
+
+        The revision is always complete: the cases named in ``keep_ids`` are copied verbatim
+        from ``keep_from_revision`` in that order, followed by ``drafts``; ids are then
+        assigned TC-001.. in that order. Keeping unchanged cases spares the caller from
+        re-sending them, and the copy cannot drift from what was reviewed. The base must be
+        the latest revision, so a stale caller cannot discard newer changes, and every case
+        of the base that is not kept is reported in ``not_kept`` (replaced or dropped).
 
         Invalid test cases are still stored (so the reviewer can fix them); export is what
         refuses invalid revisions.
         """
         analysis = self._store.load_analysis(run_id)
+        kept, base = self._kept_drafts(run_id, keep_ids, keep_from_revision)
+        if not kept and not drafts:
+            raise InvalidArtifactError("Submit at least one test case (new or kept).")
+        resent = {normalized_title(d.title) for d in drafts}
+        both = [
+            i for i, d in zip(keep_ids, kept, strict=True) if normalized_title(d.title) in resent
+        ]
+        if both:
+            raise InvalidArtifactError(
+                f"{', '.join(both)} kept and also re-sent with the same title. To replace a "
+                "case, leave it out of keep_ids."
+            )
         test_set = TestCaseSet(
             run_id=run_id,
             story_key=analysis.story_key,
             revision=self._store.next_revision(run_id),
             created_at=self._store.now(),
-            test_cases=assign_ids(drafts),
+            test_cases=assign_ids([*kept, *drafts]),
         )
         report = validate_test_cases(test_set, analysis)
         self._store.save_test_cases(test_set)
@@ -94,8 +118,39 @@ class RunService:
             run_id=run_id,
             revision=test_set.revision,
             test_case_count=len(test_set.test_cases),
+            kept_from_revision=base.revision if base else None,
+            kept=dict(zip(keep_ids, (tc.id for tc in test_set.test_cases), strict=False)),
+            not_kept=[tc.id for tc in base.test_cases if tc.id not in keep_ids] if base else [],
             report=report,
         )
+
+    def _kept_drafts(
+        self, run_id: str, keep_ids: Sequence[str], revision: int | None
+    ) -> tuple[list[TestCaseDraft], TestCaseSet | None]:
+        if not keep_ids:
+            if revision is not None:
+                raise InvalidArtifactError("keep_from_revision needs keep_ids.")
+            return [], None
+        if revision is None:
+            raise InvalidArtifactError(
+                "keep_ids needs keep_from_revision: the latest revision, which you read."
+            )
+        if len(keep_ids) != len(set(keep_ids)):
+            raise InvalidArtifactError("keep_ids contains duplicates.")
+        base = self._store.load_test_cases(run_id, revision)  # NotFoundError if unknown
+        latest = self._store.get_manifest(run_id).latest_revision
+        if base.revision != latest:
+            raise InvalidArtifactError(
+                f"keep_from_revision {base.revision} is stale: the latest revision is "
+                f"{latest}. Read revision {latest} and resubmit against it."
+            )
+        by_id = {tc.id: tc for tc in base.test_cases}
+        missing = [i for i in keep_ids if i not in by_id]
+        if missing:
+            raise NotFoundError(
+                f"Revision {base.revision} has no test case(s) {', '.join(missing)}."
+            )
+        return [TestCaseDraft(**by_id[i].model_dump(exclude={"id"})) for i in keep_ids], base
 
     def validate_test_cases(self, run_id: str, revision: int | None = None) -> ValidationReport:
         """Validate a stored revision (default: latest)."""

@@ -85,6 +85,149 @@ def test_invalid_revision_is_stored_but_export_blocked(
         export.export_xray_csv(run_id, revision=1)
 
 
+def test_kept_cases_are_copied_verbatim_into_a_complete_revision(
+    runs: RunService, store: RunStore, analysis: StoryAnalysis, drafts: list[TestCaseDraft]
+) -> None:
+    run_id = runs.submit_story_analysis(analysis).run_id
+    runs.submit_test_cases(run_id, drafts)
+    rewritten = drafts[1].model_copy(update={"title": "Rewritten second case"})
+
+    keep = ["TC-005", "TC-001", "TC-003", "TC-004"]
+    result = runs.submit_test_cases(run_id, [rewritten], keep_ids=keep, keep_from_revision=1)
+
+    assert (result.revision, result.test_case_count, result.kept_from_revision) == (2, 5, 1)
+    kept = {"TC-005": "TC-001", "TC-001": "TC-002", "TC-003": "TC-003", "TC-004": "TC-004"}
+    assert result.kept == kept
+    assert result.not_kept == ["TC-002"]  # replaced by the rewritten case
+    assert result.report.valid
+    first, second = store.load_test_cases(run_id, 1), store.load_test_cases(run_id, 2)
+    old = {tc.id: tc.model_dump(exclude={"id"}) for tc in first.test_cases}
+    new = [tc.model_dump(exclude={"id"}) for tc in second.test_cases]
+    assert new == [*(old[i] for i in kept), rewritten.model_dump()]
+    # Traceability travels with the content: TC-005 (the only AC-4 case) is now TC-001.
+    assert second.test_cases[0].covers == first.test_cases[4].covers
+    assert result.report.coverage["AC-4"] == ["TC-001"]
+
+
+def test_keep_mapping_is_deterministic(
+    runs: RunService, analysis: StoryAnalysis, drafts: list[TestCaseDraft]
+) -> None:
+    run_id = runs.submit_story_analysis(analysis).run_id
+    runs.submit_test_cases(run_id, drafts)
+    keep = ["TC-004", "TC-002", "TC-001", "TC-003", "TC-005"]
+    first = runs.submit_test_cases(run_id, [], keep_ids=keep, keep_from_revision=1)
+    second = runs.submit_test_cases(run_id, [], keep_ids=keep, keep_from_revision=2)
+    assert first.kept == dict(
+        zip(keep, ["TC-001", "TC-002", "TC-003", "TC-004", "TC-005"], strict=True)
+    )
+    assert second.kept == {"TC-004": "TC-001", "TC-002": "TC-002", "TC-001": "TC-003"} | {
+        "TC-003": "TC-004",
+        "TC-005": "TC-005",
+    }
+
+
+def test_keep_rejects_a_stale_or_foreign_base_revision(
+    runs: RunService, store: RunStore, analysis: StoryAnalysis, drafts: list[TestCaseDraft]
+) -> None:
+    run_id = runs.submit_story_analysis(analysis).run_id
+    runs.submit_test_cases(run_id, drafts)
+    runs.submit_test_cases(run_id, drafts[1:])  # someone else's newer revision 2
+    with pytest.raises(InvalidArtifactError, match="stale: the latest revision is 2"):
+        runs.submit_test_cases(run_id, [], keep_ids=["TC-001"], keep_from_revision=1)
+    with pytest.raises(NotFoundError, match="no revision 3"):
+        runs.submit_test_cases(run_id, [], keep_ids=["TC-001"], keep_from_revision=3)
+    # Revisions are per run: another run's revision 2 does not exist here.
+    second_store = RunStore(store.root.parent, id_factory=lambda _: "20261005T120000Z-def456")
+    second = RunService(second_store)
+    other = second.submit_story_analysis(analysis).run_id
+    second.submit_test_cases(other, drafts)
+    with pytest.raises(NotFoundError, match="no revision 2"):
+        second.submit_test_cases(other, [], keep_ids=["TC-001"], keep_from_revision=2)
+    assert store.get_manifest(run_id).latest_revision == 2
+    assert store.get_manifest(other).latest_revision == 1
+
+
+def test_keep_rejects_unknown_duplicate_or_empty_input(
+    runs: RunService, store: RunStore, analysis: StoryAnalysis, drafts: list[TestCaseDraft]
+) -> None:
+    run_id = runs.submit_story_analysis(analysis).run_id
+    with pytest.raises(NotFoundError):  # nothing submitted yet
+        runs.submit_test_cases(run_id, [], keep_ids=["TC-001"], keep_from_revision=1)
+    runs.submit_test_cases(run_id, drafts)
+    with pytest.raises(NotFoundError, match="TC-009"):
+        runs.submit_test_cases(run_id, [], keep_ids=["TC-001", "TC-009"], keep_from_revision=1)
+    with pytest.raises(InvalidArtifactError, match="duplicates"):
+        runs.submit_test_cases(run_id, [], keep_ids=["TC-001", "TC-001"], keep_from_revision=1)
+    with pytest.raises(InvalidArtifactError, match="needs keep_from_revision"):
+        runs.submit_test_cases(run_id, [], keep_ids=["TC-001"])
+    with pytest.raises(InvalidArtifactError, match="needs keep_ids"):
+        runs.submit_test_cases(run_id, drafts, keep_from_revision=1)
+    with pytest.raises(InvalidArtifactError, match="at least one"):
+        runs.submit_test_cases(run_id, [])
+    assert store.get_manifest(run_id).latest_revision == 1
+
+
+def test_a_case_cannot_be_both_kept_and_replaced(
+    runs: RunService, store: RunStore, analysis: StoryAnalysis, drafts: list[TestCaseDraft]
+) -> None:
+    run_id = runs.submit_story_analysis(analysis).run_id
+    runs.submit_test_cases(run_id, drafts)
+    fixed = drafts[1].model_copy(update={"title": drafts[1].title.upper() + "!", "priority": "low"})
+    with pytest.raises(InvalidArtifactError, match="TC-002 kept and also re-sent"):
+        runs.submit_test_cases(run_id, [fixed], keep_ids=["TC-001", "TC-002"], keep_from_revision=1)
+    assert store.get_manifest(run_id).latest_revision == 1
+
+
+def test_dropping_kept_cases_is_reported_and_still_validated(
+    runs: RunService, export: ExportService, analysis: StoryAnalysis, drafts: list[TestCaseDraft]
+) -> None:
+    run_id = runs.submit_story_analysis(analysis).run_id
+    runs.submit_test_cases(run_id, drafts)
+    keep = ["TC-001", "TC-002", "TC-003", "TC-004"]  # TC-005 is the only AC-4 case
+    result = runs.submit_test_cases(run_id, [], keep_ids=keep, keep_from_revision=1)
+    assert result.not_kept == ["TC-005"]
+    assert "AC_NOT_COVERED" in {i.code for i in result.report.errors}
+    with pytest.raises(ExportBlockedError, match="AC_NOT_COVERED"):
+        export.export_xray_csv(run_id)
+
+
+def test_kept_cases_keep_their_readiness_and_export_gates(
+    runs: RunService, export: ExportService, analysis: StoryAnalysis, drafts: list[TestCaseDraft]
+) -> None:
+    blocked = drafts[2].model_copy(
+        update={
+            "title": "Reusing a reset link follows the agreed rule",
+            "status": Readiness.CLARIFICATION_REQUIRED,
+            "covers": [],
+            "finding_ids": ["F-1"],
+            "open_question_ids": ["F-1"],
+        }
+    )
+    gap_only = blocked.model_copy(
+        update={
+            "title": "Gap asserted as ready",
+            "status": Readiness.READY,
+            "risk_ids": [],
+            "open_question_ids": [],
+        }
+    )
+    run_id = runs.submit_story_analysis(analysis).run_id
+    runs.submit_test_cases(run_id, [*drafts, blocked, gap_only])
+
+    keep = ["TC-001", "TC-002", "TC-003", "TC-004", "TC-005", "TC-006", "TC-007"]
+    kept = runs.submit_test_cases(run_id, [], keep_ids=keep, keep_from_revision=1).report
+    assert kept.clarification_required_test_case_ids == ["TC-006"]
+    assert [i.test_case_id for i in kept.errors if i.code == "TC_READY_GAP_ONLY"] == ["TC-007"]
+    with pytest.raises(ExportBlockedError, match="TC_READY_GAP_ONLY"):
+        export.export_xray_csv(run_id, ready_only=True)
+
+    report = runs.submit_test_cases(run_id, [], keep_ids=keep[:6], keep_from_revision=2).report
+    assert (report.valid, report.export_ready) == (True, False)
+    with pytest.raises(ExportBlockedError, match="CLARIFICATION_REQUIRED: TC-006"):
+        export.export_xray_csv(run_id)
+    assert export.export_xray_csv(run_id, ready_only=True).excluded_test_case_ids == ["TC-006"]
+
+
 def test_export_refuses_overwrite_unless_asked(
     runs: RunService, export: ExportService, analysis: StoryAnalysis, drafts: list[TestCaseDraft]
 ) -> None:

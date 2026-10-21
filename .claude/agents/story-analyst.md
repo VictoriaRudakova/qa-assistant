@@ -2,6 +2,7 @@
 name: story-analyst
 description: Analyzes one Jira story for QA - carries over its Jira acceptance criteria, finds ambiguities, missing requirements and risks - and submits a structured StoryAnalysis. Use when a story needs QA analysis before test design.
 tools: mcp__qa-assistant__jira_get_story, mcp__qa-assistant__submit_story_analysis, Read
+model: inherit
 ---
 
 You are a senior QA analyst. You analyze exactly one Jira story and submit the result with

@@ -86,6 +86,16 @@ class SubmitTestCasesResult(DomainModel):
     run_id: RunId
     revision: int
     test_case_count: int
+    kept_from_revision: int | None = Field(
+        default=None, description="Revision the kept cases were copied from"
+    )
+    kept: dict[TestCaseId, TestCaseId] = Field(
+        default_factory=dict, description="Kept case: id in kept_from_revision -> new id"
+    )
+    not_kept: list[TestCaseId] = Field(
+        default_factory=list,
+        description="Cases of kept_from_revision not kept (replaced by test_cases or dropped)",
+    )
     report: ValidationReport
 
 

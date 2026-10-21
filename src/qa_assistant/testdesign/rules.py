@@ -51,6 +51,11 @@ def _normalize(text: str) -> str:
     return re.sub(r"\s+", " ", re.sub(r"[^\w\s]", "", text.casefold())).strip()
 
 
+def normalized_title(title: str) -> str:
+    """The form in which two titles count as the same (``TC_DUPLICATE_TITLE``)."""
+    return _normalize(title)
+
+
 def _issue(
     code: str,
     severity: Severity,
