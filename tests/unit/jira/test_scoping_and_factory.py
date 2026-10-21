@@ -3,7 +3,12 @@ from __future__ import annotations
 import pytest
 
 from qa_assistant.config.settings import JiraSettings
-from qa_assistant.domain.story import JiraStory, JiraStorySummary, StorySearchPage
+from qa_assistant.domain.story import (
+    JiraIssueIdentity,
+    JiraStory,
+    JiraStorySummary,
+    StorySearchPage,
+)
 from qa_assistant.errors import NotConfiguredError, NotFoundError
 from qa_assistant.jira.factory import UnavailableJiraClient, build_jira_client
 from qa_assistant.jira.scoping import ProjectScopedJiraClient, issue_in_project, scope_jql
@@ -118,6 +123,9 @@ class _Static:
         self.page = page
 
     def get_story(self, issue_key: str, *, include_comments: bool = False) -> JiraStory:
+        raise NotImplementedError
+
+    def get_issue_identity(self, issue_key: str) -> JiraIssueIdentity:
         raise NotImplementedError
 
     def search_stories(

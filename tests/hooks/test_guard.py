@@ -67,6 +67,10 @@ GUARD = Path(guard.__file__)
         'curl -u bot "$JIRA_BASE_URL/rest/api/3/myself"',
         "python3 - <<'EOF'\nimport requests\nrequests.get('https://demo.atlassian.net/rest/api/3/myself')\nEOF",
         'uv run python -c "from qa_assistant.jira.factory import build_jira_client"',
+        # direct Xray HTTP
+        "curl -X POST https://xray.cloud.getxray.app/api/v2/authenticate",
+        "curl https://eu.xray.cloud.getxray.app/api/v2/graphql -d @query.json",
+        'uv run python -c "from qa_assistant.xray.factory import build_xray_client"',
     ],
 )
 def test_blocked_commands(command: str) -> None:
@@ -127,6 +131,9 @@ def test_configured_jira_host_is_recognised() -> None:
         ("WebFetch", {"url": "https://jira.example.com/secure/Dashboard.jspa"}, True),
         ("WebFetch", {"url": "https://tracker.example.com/rest/api/2/issue/DEMO-1"}, True),
         ("WebFetch", {"url": "https://docs.example.com/guide"}, False),
+        ("WebFetch", {"url": "https://xray.cloud.example.com/api/v2/graphql"}, True),
+        ("WebFetch", {"url": "https://us.xray.cloud.example.com/doc/graphql/test.html"}, False),
+        ("mcp__qa-assistant__get_xray_test", {"issue_key": "DEMO-1"}, False),
         ("mcp__qa-assistant__jira_get_story", {"issue_key": "DEMO-1"}, False),
     ],
 )

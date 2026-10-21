@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Protocol
 
 from qa_assistant.domain.test_case import TestCaseSet
+from qa_assistant.domain.xray import XrayTest
 from qa_assistant.xray.mapping import XrayCsvMapping
 
 
@@ -21,3 +22,12 @@ class XrayCsvExporter(Protocol):
     def mapping(self) -> XrayCsvMapping: ...
 
     def render(self, test_set: TestCaseSet) -> RenderedCsv: ...
+
+
+class XrayTestReader(Protocol):
+    """Read-only access to Xray Tests in the configured Jira project."""
+
+    def get_test(self, issue_key: str, *, step_offset: int = 0) -> XrayTest:
+        """One Test with its steps (from ``step_offset``) and requirements. Raises
+        ``NotFoundError`` if the key is outside the project or is not a visible Test."""
+        ...

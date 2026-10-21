@@ -1,0 +1,72 @@
+{
+  "data": {
+    "getTests": {
+      "total": 1,
+      "results": [
+        {
+          "issueId": "10201",
+          "projectId": "10000",
+          "testType": {"name": "Manual", "kind": "Steps"},
+          "steps": [
+            {
+              "id": "step-1",
+              "action": "Open the sign-in page",
+              "data": null,
+              "result": "The sign-in form is shown",
+              "callTestIssueId": null
+            },
+            {
+              "id": "step-2",
+              "action": "Submit valid credentials",
+              "data": "user: qa.user@example.com",
+              "result": "The dashboard is shown",
+              "callTestIssueId": null
+            },
+            {
+              "id": "step-3",
+              "action": "Run the shared sign-out test",
+              "data": "",
+              "result": "",
+              "callTestIssueId": "10202"
+            }
+          ],
+          "gherkin": null,
+          "unstructured": null,
+          "folder": {"name": "Regression", "path": "/Regression"},
+          "lastModified": "2026-10-01T10:00:00Z",
+          "jira": {
+            "key": "DEMO-201",
+            "summary": "Sign in with valid credentials",
+            "status": {"name": "To Do"},
+            "labels": ["regression"]
+          },
+          "coverableIssues": {
+            "total": 2,
+            "start": 0,
+            "limit": 100,
+            "results": [
+              {
+                "issueId": "10101",
+                "jira": {
+                  "key": "DEMO-101",
+                  "summary": "Sign in to the account",
+                  "status": {"name": "In Progress"},
+                  "issuetype": {"name": "Story"}
+                }
+              },
+              {
+                "issueId": "20005",
+                "jira": {
+                  "key": "OTHER-5",
+                  "summary": "Story in a project outside the scope",
+                  "status": {"name": "Done"},
+                  "issuetype": {"name": "Story"}
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

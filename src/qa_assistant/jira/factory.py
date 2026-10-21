@@ -8,7 +8,7 @@ from typing import NoReturn
 import httpx
 
 from qa_assistant.config.settings import JiraDeployment, JiraSettings
-from qa_assistant.domain.story import JiraStory, StorySearchPage
+from qa_assistant.domain.story import JiraIssueIdentity, JiraStory, StorySearchPage
 from qa_assistant.errors import NotConfiguredError, QAAssistantError
 from qa_assistant.jira.client import HttpJiraClient
 from qa_assistant.jira.fixtures import FixtureJiraClient
@@ -32,6 +32,9 @@ class UnavailableJiraClient:
         raise self.error
 
     def get_story(self, issue_key: str, *, include_comments: bool = False) -> JiraStory:
+        self._fail()
+
+    def get_issue_identity(self, issue_key: str) -> JiraIssueIdentity:
         self._fail()
 
     def search_stories(

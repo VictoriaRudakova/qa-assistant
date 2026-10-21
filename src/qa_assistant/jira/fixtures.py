@@ -11,8 +11,13 @@ from __future__ import annotations
 from pathlib import Path
 
 from qa_assistant.domain.base import IssueKey
-from qa_assistant.domain.story import JiraStory, JiraStorySummary, StorySearchPage
-from qa_assistant.errors import NotFoundError
+from qa_assistant.domain.story import (
+    JiraIssueIdentity,
+    JiraStory,
+    JiraStorySummary,
+    StorySearchPage,
+)
+from qa_assistant.errors import NotConfiguredError, NotFoundError
 from qa_assistant.jira.untrusted import with_untrusted_flags
 
 
@@ -28,6 +33,9 @@ class FixtureJiraClient:
         if not include_comments:
             story = story.model_copy(update={"comments": []})
         return with_untrusted_flags(story)
+
+    def get_issue_identity(self, issue_key: IssueKey) -> JiraIssueIdentity:
+        raise NotConfiguredError("Fixture stories have no Jira issue ids.")
 
     def search_stories(
         self, jql: str, *, max_results: int, next_page_token: str | None = None

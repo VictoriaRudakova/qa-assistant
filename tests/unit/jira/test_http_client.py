@@ -389,3 +389,51 @@ def test_http_jira_client_default_clock() -> None:
         clock=lambda: FIXED,
     )
     assert client.get_story("DEMO-1").fetched_at == FIXED
+
+
+@pytest.mark.parametrize(("deployment", "api"), [("cloud", "3"), ("data_center", "2")])
+def test_issue_identity_reads_numeric_ids(deployment: str, api: str) -> None:
+    body = {"id": "10201", "key": "DEMO-201", "fields": {"project": {"id": "10000", "key": "DEMO"}}}
+    rec = Recorder(ok(body))
+    identity = client_for(rec, deployment=deployment).get_issue_identity("DEMO-201")
+
+    assert (identity.issue_id, identity.project_id, identity.project_key) == (
+        "10201",
+        "10000",
+        "DEMO",
+    )
+    assert rec.last.method == "GET"
+    assert rec.last.url.path == f"/rest/api/{api}/issue/DEMO-201"
+    assert rec.last.url.params["fields"] == "project"
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        {"key": "DEMO-201", "fields": {"project": {"id": "10000", "key": "DEMO"}}},
+        {"id": "10201", "key": "DEMO-201", "fields": {}},
+        {"id": "abc", "key": "DEMO-201", "fields": {"project": {"id": "10000", "key": "DEMO"}}},
+    ],
+    ids=["no-issue-id", "no-project", "non-numeric"],
+)
+def test_issue_identity_without_valid_ids_fails(body: dict[str, Any]) -> None:
+    with pytest.raises(JiraRequestError, match="no valid ids"):
+        client_for(Recorder(ok(body))).get_issue_identity("DEMO-201")
+
+
+def test_issue_identity_is_project_scoped() -> None:
+    rec = Recorder()
+    with pytest.raises(NotFoundError, match="outside the configured Jira project"):
+        client_for(rec).get_issue_identity("OTHER-1")
+    assert rec.requests == []
+
+
+def test_issue_identity_of_a_moved_issue_is_out_of_scope() -> None:
+    body = {"id": "1", "key": "OTHER-9", "fields": {"project": {"id": "2", "key": "OTHER"}}}
+    with pytest.raises(NotFoundError, match="outside the configured Jira project"):
+        client_for(Recorder(ok(body))).get_issue_identity("DEMO-201")
+
+
+def test_unconfigured_jira_has_no_identity() -> None:
+    with pytest.raises(NotConfiguredError):
+        build_jira_client(JiraSettings()).get_issue_identity("DEMO-1")

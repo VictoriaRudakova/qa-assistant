@@ -12,10 +12,15 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from qa_assistant.domain.story import JiraStory, StorySearchPage
+from qa_assistant.domain.story import JiraIssueIdentity, JiraStory, StorySearchPage
 
 
 class JiraClient(Protocol):
+    def get_issue_identity(self, issue_key: str) -> JiraIssueIdentity:
+        """The issue's numeric issue and project ids. Raises ``NotFoundError`` if it does not
+        exist; backends without ids (fixtures) raise ``NotConfiguredError``."""
+        ...
+
     def get_story(self, issue_key: str, *, include_comments: bool = False) -> JiraStory:
         """Fetch one issue. Raises ``NotFoundError`` if it does not exist."""
         ...

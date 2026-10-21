@@ -10,7 +10,7 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, HttpUrl, SecretStr
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 DEFAULT_ENV_FILE = Path(".env")
@@ -62,12 +62,41 @@ class JiraSettings(BaseSettings):
         return missing
 
 
+# Global Xray Cloud endpoint; data-residency tenants set a regional one
+# (e.g. https://eu.xray.cloud.getxray.app).
+DEFAULT_XRAY_CLOUD_URL = "https://xray.cloud.getxray.app"
+
+
 class XraySettings(BaseSettings):
-    """``XRAY_*`` variables. The CSV column mapping is a JSON file, never hardcoded."""
+    """``XRAY_*`` variables. The CSV column mapping is a JSON file, never hardcoded.
+
+    Xray Cloud reads use an API key (client id + secret). The project scope is Jira's
+    (``JIRA_PROJECT_KEY``); Xray has no scope setting of its own.
+    """
 
     model_config = SettingsConfigDict(env_prefix="XRAY_", extra="ignore", env_ignore_empty=True)
 
     csv_mapping_file: Path | None = None
+    cloud_base_url: HttpUrl = HttpUrl(DEFAULT_XRAY_CLOUD_URL)
+    client_id: SecretStr | None = None
+    client_secret: SecretStr | None = None
+    timeout_seconds: Annotated[float, Field(gt=0, le=120)] = 30.0
+
+    @field_validator("cloud_base_url")
+    @classmethod
+    def _https_only(cls, url: HttpUrl) -> HttpUrl:
+        if url.scheme != "https":
+            raise ValueError("XRAY_CLOUD_BASE_URL must use https")
+        return url
+
+    def missing_settings(self) -> list[str]:
+        """Names of env vars still required before an Xray Cloud client can be built."""
+        missing: list[str] = []
+        if self.client_id is None:
+            missing.append("XRAY_CLIENT_ID")
+        if self.client_secret is None:
+            missing.append("XRAY_CLIENT_SECRET")
+        return missing
 
 
 class AppSettings(BaseSettings):
@@ -88,8 +117,8 @@ class Settings(BaseModel):
 
     def secret_values(self) -> list[str]:
         """Secret values to redact from logs."""
-        token = self.jira.api_token
-        return [token.get_secret_value()] if token else []
+        secrets = (self.jira.api_token, self.xray.client_id, self.xray.client_secret)
+        return [s.get_secret_value() for s in secrets if s]
 
 
 def load_settings(env_file: Path | None = DEFAULT_ENV_FILE) -> Settings:

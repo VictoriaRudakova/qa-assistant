@@ -13,6 +13,7 @@ This page doesn't copy those schemas.
 | Kind | Tools |
 |---|---|
 | Jira reads (project-scoped) | `jira_get_story`, `jira_search_stories` |
+| Xray Cloud reads (project-scoped) | `get_xray_test` (see `docs/features/xray-cloud-read.md`) |
 | Local reads | `get_run`, `get_story_analysis`, `list_test_cases`, `get_test_cases`, `get_coverage`, `list_runs`, `validate_test_cases` |
 | Local writes (`output/runs/` only) | `submit_story_analysis`, `submit_test_cases`, `export_xray_csv` |
 | Future (separate approval, dry-run by default) | `xray_create_tests`, `xray_link_tests_to_story` |
@@ -92,6 +93,8 @@ are defined in `src/qa_assistant/errors.py`:
 - `not_configured`
 - `not_implemented`
 - `jira_error`: Jira auth failure, network error or timeout, rate limit, rejected JQL, or a server error
+- `xray_error`: Xray API key or token rejected, network error or timeout, rate limit, GraphQL
+  error, or a response that does not match the expected schema
 - `not_found`
 - `invalid_artifact`
 - `export_blocked`
@@ -107,6 +110,14 @@ call with the Pydantic message.
 - **Jira reads are wrapped by `ProjectScopedJiraClient`.** `get_story` refuses keys outside
   `JIRA_PROJECT_KEY`. JQL is rewritten to `project = "KEY" AND (<user jql>)`, results are
   filtered again, and searches are capped at `JIRA_MAX_SEARCH_RESULTS`.
+- **Xray reads use the same project scope.** `get_xray_test` refuses keys outside
+  `JIRA_PROJECT_KEY` before any request, scopes its JQL with the same wrapper, checks the
+  returned key, and returns only the key of a covered issue in another project. It also
+  requires Xray's numeric issue and project ids to equal the configured Jira's (fail
+  closed). That is a cross-check, not a guarantee of tenant identity: ids are unique only
+  within one site. It sends
+  GraphQL queries only (the transport refuses any other document) and never returns the API
+  key or bearer token.
 - **`run_id` is pattern-validated and path-contained**, so tool input can't escape
   `output/runs/`.
 - **Domain models forbid unknown fields**, so a model can't smuggle data (for example raw CSV)

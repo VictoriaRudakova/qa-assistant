@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import re
 
-from qa_assistant.domain.story import JiraStory, StorySearchPage
+from qa_assistant.domain.story import JiraIssueIdentity, JiraStory, StorySearchPage
 from qa_assistant.errors import NotFoundError
 from qa_assistant.jira.ports import JiraClient
 
@@ -51,6 +51,19 @@ class ProjectScopedJiraClient:
                 f"{issue_key} is outside the configured Jira project {self.project_key}."
             )
         return self._inner.get_story(issue_key, include_comments=include_comments)
+
+    def get_issue_identity(self, issue_key: str) -> JiraIssueIdentity:
+        if not issue_in_project(issue_key, self.project_key):
+            raise NotFoundError(
+                f"{issue_key} is outside the configured Jira project {self.project_key}."
+            )
+        identity = self._inner.get_issue_identity(issue_key)
+        # Defense in depth: a moved issue answers under its new key and project.
+        if identity.key != issue_key or identity.project_key != self.project_key:
+            raise NotFoundError(
+                f"{issue_key} is outside the configured Jira project {self.project_key}."
+            )
+        return identity
 
     def search_stories(
         self, jql: str, *, max_results: int, next_page_token: str | None = None

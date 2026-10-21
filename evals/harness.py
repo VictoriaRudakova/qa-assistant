@@ -29,10 +29,15 @@ from evals.report import EvalResult
 from evals.scenario import Candidate, Reference, Scenario
 from qa_assistant.domain.analysis import StoryAnalysis
 from qa_assistant.domain.enums import Readiness
-from qa_assistant.domain.story import JiraStory, StorySearchPage
+from qa_assistant.domain.story import JiraIssueIdentity, JiraStory, StorySearchPage
 from qa_assistant.domain.test_case import TestCaseDraft, TestCaseSet
 from qa_assistant.domain.validation import ValidationReport
-from qa_assistant.errors import ExportBlockedError, InvalidArtifactError, NotFoundError
+from qa_assistant.errors import (
+    ExportBlockedError,
+    InvalidArtifactError,
+    NotConfiguredError,
+    NotFoundError,
+)
 from qa_assistant.services.export import ExportService
 from qa_assistant.services.runs import CASE_PAGE_MAX, INDEX_PAGE_MAX, RunService
 from qa_assistant.storage.run_store import RunStore
@@ -54,6 +59,9 @@ class _ScenarioJira:
         if issue_key != self._story.key:
             raise NotFoundError(f"Issue {issue_key} does not exist.")
         return self._story
+
+    def get_issue_identity(self, issue_key: str) -> JiraIssueIdentity:
+        raise NotConfiguredError("Scenario stories have no Jira issue ids.")
 
     def search_stories(
         self, jql: str, *, max_results: int, next_page_token: str | None = None

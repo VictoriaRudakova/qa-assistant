@@ -15,10 +15,13 @@ from datetime import UTC, datetime
 from typing import Any
 from urllib.parse import quote
 
+from pydantic import ValidationError
+
 from qa_assistant.config.settings import JiraDeployment
 from qa_assistant.domain.story import (
     Comment,
     IssueRef,
+    JiraIssueIdentity,
     JiraStory,
     JiraStorySummary,
     StorySearchPage,
@@ -80,6 +83,26 @@ class HttpJiraClient:
             not_found=f"Issue {issue_key} does not exist or is not visible to the Jira account.",
         )
         return self._to_story(_mapping(data), include_comments=include_comments)
+
+    def get_issue_identity(self, issue_key: str) -> JiraIssueIdentity:
+        data = _mapping(
+            self._http.get_json(
+                f"{self._api}/issue/{quote(issue_key, safe='')}",
+                {"fields": "project"},
+                not_found=f"Issue {issue_key} does not exist or is not visible to the Jira "
+                "account.",
+            )
+        )
+        project = _mapping(_mapping(data.get("fields")).get("project"))
+        try:
+            return JiraIssueIdentity(
+                key=_str(data.get("key")),
+                issue_id=_str(data.get("id")),
+                project_id=_str(project.get("id")),
+                project_key=_str(project.get("key")),
+            )
+        except ValidationError:
+            raise JiraRequestError(f"Jira returned no valid ids for {issue_key}.") from None
 
     def search_stories(
         self, jql: str, *, max_results: int, next_page_token: str | None = None

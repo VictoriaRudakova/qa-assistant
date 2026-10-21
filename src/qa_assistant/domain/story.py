@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Annotated
 
-from pydantic import Field
+from pydantic import Field, StringConstraints
 
 from qa_assistant.domain.base import AcceptanceCriterionId, DomainModel, IssueKey, NonEmptyStr
 from qa_assistant.domain.enums import AcceptanceCriterionSource
@@ -28,6 +29,16 @@ class Comment(DomainModel):
     author: str = Field(description="Display name only; never an email address")
     created: datetime
     body: str
+
+
+class JiraIssueIdentity(DomainModel):
+    """An issue's numeric ids in one Jira site, used to check that another system (Xray)
+    returned the same issue of the same site."""
+
+    key: IssueKey
+    issue_id: Annotated[str, StringConstraints(pattern=r"^\d+$")]
+    project_id: Annotated[str, StringConstraints(pattern=r"^\d+$")]
+    project_key: str
 
 
 class JiraStorySummary(DomainModel):

@@ -2,7 +2,7 @@
 """Claude Code hooks for this repository (configured in ``.claude/settings.json``).
 
     guard.py pre-tool   PreToolUse: block secret files, git push, destructive commands and
-                        direct Jira HTTP access (the MCP Jira tools exist for that).
+                        direct Jira/Xray HTTP access (the MCP tools exist for that).
     guard.py post-edit  PostToolUse on Edit/Write: ruff lint + format check of an edited .py.
     guard.py stop       Stop: run scripts/verify.sh once per changed working tree.
 
@@ -68,18 +68,22 @@ SAFE_RM_DIRS = frozenset(
 )
 JIRA_TARGET = re.compile(
     r"atlassian\.net|/rest/api/|/rest/agile/|/rest/raven/|JIRA_BASE_URL|\bjira\.[\w-]+\.\w+"
-    r"|HttpJiraClient|JiraHttp\b|build_jira_client",
+    r"|HttpJiraClient|JiraHttp\b|build_jira_client"
+    r"|getxray\.app/api/|/api/v[12]/(?:graphql|authenticate)|XRAY_CLOUD_BASE_URL"
+    r"|XrayCloudHttp|CloudXrayClient|build_xray_client",
     re.IGNORECASE,
 )
 NETWORK_COMMANDS = frozenset({"curl", "wget", "http", "https", "xh", "nc", "ncat", "telnet"})
 INTERPRETERS = frozenset({"python", "python3", "node", "deno", "ruby", "perl", "uv", "pwsh"})
 HTTP_LIBRARY = re.compile(
     r"\b(?:requests|httpx|urllib|aiohttp|fetch|Invoke-WebRequest|Invoke-RestMethod"
-    r"|HttpJiraClient|JiraHttp|build_jira_client)\b"
+    r"|HttpJiraClient|JiraHttp|build_jira_client|XrayCloudHttp|CloudXrayClient"
+    r"|build_xray_client)\b"
 )
 JIRA_MESSAGE = (
-    "direct Jira HTTP access: use the qa-assistant MCP tools "
-    "(jira_get_story, jira_search_stories), which are read-only and project-scoped"
+    "direct Jira/Xray HTTP access: use the qa-assistant MCP tools "
+    "(jira_get_story, jira_search_stories, get_xray_test), which are read-only and "
+    "project-scoped"
 )
 
 
@@ -198,6 +202,7 @@ def url_reason(url: str, jira_host: str | None = None) -> str | None:
         or host.startswith("jira.")
         or (jira_host and host == jira_host.lower())
         or re.search(r"/rest/(?:api|agile)/|/browse/[A-Z][A-Z0-9_]+-\d+", parsed.path)
+        or ("xray" in host and parsed.path.startswith("/api/"))
     ):
         return JIRA_MESSAGE
     return None

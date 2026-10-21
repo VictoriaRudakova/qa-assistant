@@ -54,3 +54,9 @@ class JiraRequestError(QAAssistantError):
     """Jira could not serve a read (credentials, network, rate limit, bad JQL, server error)."""
 
     code = "jira_error"
+
+
+class XrayRequestError(QAAssistantError):
+    """Xray Cloud could not serve a read (credentials, network, rate limit, bad response)."""
+
+    code = "xray_error"

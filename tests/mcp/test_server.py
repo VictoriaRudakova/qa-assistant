@@ -13,10 +13,12 @@ from collections.abc import AsyncIterator
 from pathlib import Path
 from typing import Any
 
+import httpx
 import pytest
 from mcp import Client
 from mcp.server.mcpserver import MCPServer
 from mcp.types import CallToolResult, TextContent
+from pydantic import SecretStr
 
 from qa_assistant.config.settings import load_settings
 from qa_assistant.domain.analysis import StoryAnalysis
@@ -26,9 +28,22 @@ from qa_assistant.mcp.server import ServerDependencies, build_dependencies, crea
 from qa_assistant.services.export import ExportService
 from qa_assistant.services.runs import RunService
 from qa_assistant.storage.run_store import RunStore
+from qa_assistant.xray.cloud_client import CloudXrayClient
+from qa_assistant.xray.cloud_http import XrayCloudHttp
 from qa_assistant.xray.csv_exporter import MappedXrayCsvExporter
 from qa_assistant.xray.mapping import XrayCsvMapping
-from tests.support import FIXTURES, FakeJiraClient, load_json
+from qa_assistant.xray.ports import XrayTestReader
+from tests.support import (
+    DEMO_201_IDENTITY,
+    FIXTURES,
+    XRAY_CLIENT_ID,
+    XRAY_CLIENT_SECRET,
+    XRAY_TOKEN,
+    FakeJiraClient,
+    XrayRouter,
+    load_json,
+    xray_test_response,
+)
 
 SNAPSHOT = Path(__file__).parent / "snapshots" / "tool_schemas.json"
 EXPECTED_TOOLS = {
@@ -44,6 +59,7 @@ EXPECTED_TOOLS = {
     "get_test_cases",
     "list_runs",
     "get_coverage",
+    "get_xray_test",
 }
 
 
@@ -53,12 +69,42 @@ def anyio_backend() -> str:
 
 
 @pytest.fixture
+def xray_router() -> XrayRouter:
+    return XrayRouter(
+        httpx.Response(200, json=xray_test_response()),
+        httpx.Response(502),
+    )
+
+
+@pytest.fixture
+def fake_xray(xray_router: XrayRouter, fake_jira: FakeJiraClient) -> XrayTestReader:
+    fake_jira.identities[DEMO_201_IDENTITY.key] = DEMO_201_IDENTITY
+    http = XrayCloudHttp(
+        "https://xray.example.com",
+        SecretStr(XRAY_CLIENT_ID),
+        SecretStr(XRAY_CLIENT_SECRET),
+        timeout_seconds=5,
+        transport=httpx.MockTransport(xray_router),
+    )
+    return CloudXrayClient(
+        http,
+        jira=ProjectScopedJiraClient(fake_jira, "DEMO", max_search_results=50),
+        project_key="DEMO",
+        browse_base_url="https://demo.example.com",
+    )
+
+
+@pytest.fixture
 def server(
-    store: RunStore, fake_jira: FakeJiraClient, synthetic_mapping: XrayCsvMapping
+    store: RunStore,
+    fake_jira: FakeJiraClient,
+    fake_xray: XrayTestReader,
+    synthetic_mapping: XrayCsvMapping,
 ) -> MCPServer:
     jira = ProjectScopedJiraClient(fake_jira, "DEMO", max_search_results=50)
     deps = ServerDependencies(
         jira=jira,
+        xray=fake_xray,
         runs=RunService(store, jira),
         export=ExportService(store, MappedXrayCsvExporter(synthetic_mapping)),
     )
@@ -106,6 +152,7 @@ async def test_tool_names_and_annotations(client: Client) -> None:
         "get_test_cases",
         "list_runs",
         "get_coverage",
+        "get_xray_test",
     }
     assert not any(t.annotations and t.annotations.destructive_hint for t in tools.values())
 
@@ -320,6 +367,10 @@ async def test_server_without_configuration_reports_not_configured(tmp_path: Pat
         )
         export_error = await call_error(unconfigured, "export_xray_csv", {"run_id": run["run_id"]})
         assert "XRAY_CSV_MAPPING_FILE" in export_error
+        xray_error = await call_error(unconfigured, "get_xray_test", {"issue_key": "DEMO-1"})
+        assert "[not_configured]" in xray_error
+        assert "verified against Jira" in xray_error
+        assert "JIRA_BASE_URL" in xray_error
 
 
 def test_build_dependencies_loads_mapping(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -336,3 +387,54 @@ def test_build_dependencies_loads_mapping(tmp_path: Path, monkeypatch: pytest.Mo
     )
     exported = deps.export.export_xray_csv(run_id)
     assert exported.mapping_name == "synthetic-placeholder"
+
+
+@pytest.mark.anyio
+async def test_get_xray_test_reads_steps_and_requirements(
+    client: Client, xray_router: XrayRouter
+) -> None:
+    test = await call_ok(client, "get_xray_test", {"issue_key": "DEMO-201"})
+
+    assert test["key"] == "DEMO-201"
+    assert test["test_type"] == {"name": "Manual", "kind": "Steps"}
+    assert [s["expected_result"] for s in test["steps"]][:2] == [
+        "The sign-in form is shown",
+        "The dashboard is shown",
+    ]
+    assert [(r["key"], r["in_project"]) for r in test["requirements"]] == [
+        ("DEMO-101", True),
+        ("OTHER-5", False),
+    ]
+    rendered = json.dumps(test)
+    for secret in (XRAY_CLIENT_ID, XRAY_CLIENT_SECRET, XRAY_TOKEN):
+        assert secret not in rendered
+    assert {r.method for r in xray_router.requests} == {"POST"}
+
+    failed = await call_error(client, "get_xray_test", {"issue_key": "DEMO-201"})
+    assert failed.endswith("[xray_error] Xray returned HTTP 502.")
+
+
+@pytest.mark.anyio
+@pytest.mark.parametrize(
+    "arguments",
+    [
+        {"issue_key": "demo-201"},
+        {"issue_key": "DEMO-0"},
+        {"issue_key": ""},
+        {"issue_key": 'DEMO-1" OR project = "OTHER'},
+        {},
+        {"issue_key": "DEMO-201", "step_offset": -1},
+    ],
+)
+async def test_get_xray_test_rejects_invalid_input(
+    client: Client, xray_router: XrayRouter, arguments: dict[str, Any]
+) -> None:
+    await call_error(client, "get_xray_test", arguments)
+    assert xray_router.requests == []
+
+
+@pytest.mark.anyio
+async def test_get_xray_test_is_project_scoped(client: Client, xray_router: XrayRouter) -> None:
+    message = await call_error(client, "get_xray_test", {"issue_key": "OTHER-201"})
+    assert "[not_found] OTHER-201 is outside the configured Jira project DEMO." in message
+    assert xray_router.requests == []

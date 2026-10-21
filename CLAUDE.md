@@ -32,6 +32,7 @@ uv run pre-commit run --all-files        # ruff, mypy, gitleaks, private-key + o
 UPDATE_GOLDEN=1 uv run pytest tests/unit/xray      # regenerate CSV golden file
 UPDATE_SNAPSHOTS=1 uv run pytest tests/mcp         # regenerate MCP tool contract
 JIRA_LIVE_TEST_ISSUE=<KEY> uv run pytest -m live    # opt-in read-only Jira smoke test
+XRAY_LIVE_TEST_ISSUE=<KEY> uv run pytest -m live tests/live/test_xray_live.py  # Xray Cloud
 ```
 
 ## Layout
@@ -40,7 +41,8 @@ JIRA_LIVE_TEST_ISSUE=<KEY> uv run pytest -m live    # opt-in read-only Jira smok
 - `src/qa_assistant/jira/` - Jira port, project scoping, AC extraction, read-only HTTP client
   (`client.py`, GET-only `http.py`), ADF/wiki -> text (`text.py`)
 - `src/qa_assistant/analysis/`, `testdesign/` - deterministic checks, coverage, rule engine
-- `src/qa_assistant/xray/` - configurable column mapping + mapping-driven CSV exporter
+- `src/qa_assistant/xray/` - configurable column mapping + mapping-driven CSV exporter;
+  read-only Xray Cloud client (`cloud_http.py`: GraphQL queries only; `cloud_client.py`)
 - `src/qa_assistant/storage/` - file-based run store; `services/` - use cases
 - `src/qa_assistant/mcp/server.py` - MCP tools (thin adapters over services)
 - `.claude/agents/` (story-analyst, test-designer, test-reviewer), `.claude/skills/`
@@ -54,7 +56,7 @@ JIRA_LIVE_TEST_ISSUE=<KEY> uv run pytest -m live    # opt-in read-only Jira smok
 
 ## MCP tools
 
-Reads: `jira_get_story`, `jira_search_stories`, `get_run` (overview), `get_story_analysis`,
+Reads: `jira_get_story`, `jira_search_stories`, `get_xray_test` (Xray Cloud), `get_run` (overview), `get_story_analysis`,
 `list_test_cases`, `get_test_cases` (paged), `get_coverage`, `list_runs`, `validate_test_cases`.
 Writes (local only): `submit_story_analysis`, `submit_test_cases`, `export_xray_csv`.
 Future (separate approval): `xray_create_tests`, `xray_link_tests_to_story`.
@@ -74,7 +76,10 @@ Future (separate approval): `xray_create_tests`, `xray_link_tests_to_story`.
   its ready cases, with `ready_only`) can be exported. A ready case tracing only to findings
   is an export-blocking error (`TC_READY_GAP_ONLY`). AC coverage and finding/risk coverage
   are reported apart.
-- No Xray API calls yet.
+- Xray Cloud reads: `get_xray_test` (test type, manual steps, definition, covered
+  requirements), read-only and scoped to `JIRA_PROJECT_KEY`. API key from `XRAY_CLIENT_ID` /
+  `XRAY_CLIENT_SECRET`, endpoint `XRAY_CLOUD_BASE_URL` (regional allowed). Xray
+  Server/Data Center is not supported. No Xray writes yet.
 - The Xray CSV mapping is configuration (`XRAY_CSV_MAPPING_FILE`); tests use a synthetic
   placeholder mapping that is not valid for real import.
 
