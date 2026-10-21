@@ -23,6 +23,7 @@ uv sync                                  # install (Python 3.12)
 scripts/verify.sh                        # EVERYTHING below + evals + repo guards (run before "done")
 uv run python -m evals [-v]              # deterministic agent-output evals (evals/scenarios)
 uv run python -m evals --run-id <RUN_ID> # score any run with the universal checks
+uv run python -m evals --usage           # measured tokens/cost of recorded live runs (free)
 uv run pytest                            # all tests
 uv run pytest --cov                      # with coverage gate (90%)
 uv run ruff check . && uv run ruff format --check .

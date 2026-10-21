@@ -15,6 +15,7 @@ from evals.checks import CHECKS, UNIVERSAL_CHECKS, unjustified_blocked
 from evals.harness import PAGE_BUDGET, evaluate_candidate, evaluate_stored_run
 from evals.live import SUBAGENTS, Runner, run_live
 from evals.report import ASPECTS, EvalResult, unknown_aspect_checks
+from evals.savings import replay
 from evals.scenario import SCENARIOS_DIR, Candidate, Scenario, load_candidates, load_scenarios
 from qa_assistant.domain.analysis import Finding, StoryAnalysis
 from qa_assistant.domain.enums import FindingKind
@@ -74,7 +75,7 @@ def test_engine_has_no_domain_knowledge() -> None:
     """The engine never names a scenario, a domain word or a project key; scenarios do."""
     engine = "".join(
         (SCENARIOS_DIR.parent / name).read_text(encoding="utf-8")
-        for name in ("checks.py", "harness.py", "report.py", "scenario.py", "live.py")
+        for name in ("checks.py", "harness.py", "report.py", "scenario.py", "live.py", "savings.py")
     ).casefold()
     words = {"cart", "coupon", "promotion", "campaign", "bonus", "tier", "shipping", "demo-"}
     words |= {s.casefold() for s in SCENARIOS}
@@ -274,18 +275,40 @@ def fake_session(candidate: Candidate, *, denials: tuple[str, ...] = ()) -> Runn
         run_id = runs.submit_story_analysis(StoryAnalysis.model_validate(candidate.analysis)).run_id
         drafts = [TestCaseDraft.model_validate(d) for d in candidate.test_cases]
         runs.submit_test_cases(run_id, drafts)
-        runs.submit_test_cases(run_id, drafts)  # reviewer: no changes needed
+        unchanged = [f"TC-{n:03d}" for n in range(1, len(drafts) + 1)]
+        runs.submit_test_cases(run_id, [], keep_ids=unchanged, keep_from_revision=1)  # reviewer
         events = [
             tool_use("1", "mcp__qa-assistant__jira_get_story", issue_key="DEMO-205"),
             *(tool_use(str(n), "Agent", subagent_type=a) for n, a in enumerate(SUBAGENTS, 2)),
             tool_use("9", "mcp__qa-assistant__submit_story_analysis"),
             tool_error("9", "[invalid_artifact] ANALYSIS_NON_JIRA_AC: AC-4 is not in Jira."),
+            {"type": "assistant", "message": {"model": "claude-test-main", "content": []}},
+            {
+                "type": "assistant",
+                "parent_tool_use_id": "3",
+                "message": {"model": "claude-test-small", "content": []},
+            },
+            {
+                "type": "system",
+                "subtype": "task_notification",
+                "tool_use_id": "3",
+                "usage": {"total_tokens": 900, "tool_uses": 4, "duration_ms": 2_400},
+            },
             {
                 "type": "result",
                 "subtype": "success",
                 "num_turns": 12,
                 "duration_ms": 61_000,
                 "total_cost_usd": 1.5,
+                "modelUsage": {
+                    "claude-test-main": {
+                        "inputTokens": 10,
+                        "outputTokens": 20,
+                        "cacheReadInputTokens": 30,
+                        "cacheCreationInputTokens": 40,
+                        "costUSD": 1.5,
+                    }
+                },
                 "permission_denials": [{"tool_name": d} for d in denials],
             },
         ]
@@ -307,6 +330,27 @@ def test_live_run_is_scored_with_agent_metrics(tmp_path: Path) -> None:
     assert agent["rejected_codes"] == ["ANALYSIS_NON_JIRA_AC"]
     assert (agent["cost_usd"], agent["duration_s"]) == (1.5, 61)
     assert result.metrics["reviewer"]["revisions"] == 2
+    usage = agent["usage"]
+    assert usage["models"]["claude-test-main"] == {
+        "input_tokens": 10,
+        "output_tokens": 20,
+        "cache_read_input_tokens": 30,
+        "cache_creation_input_tokens": 40,
+        "cost_usd": 1.5,
+    }
+    assert usage["agents"]["main"]["models"] == ["claude-test-main"]
+    assert usage["agents"]["test-designer"] == {
+        "invocations": 1,
+        "models": ["claude-test-small"],
+        "total_tokens": 900,
+        "tool_uses": 4,
+        "duration_s": 2,
+    }
+    assert usage["agents"]["story-analyst"]["invocations"] == 1
+    sizes = agent["payload_bytes"]["submit_story_analysis"]
+    assert sizes["request_bytes"] > 0
+    assert sizes["response_bytes"] > 0
+    assert agent["requested_models"] == {"session": None, "subagents": None}
     run_dir = next(tmp_path.iterdir())
     saved = EvalResult.model_validate_json((run_dir / "scorecard.json").read_text("utf-8"))
     assert saved.candidate == result.candidate
@@ -357,12 +401,51 @@ def test_cli_scorecards_and_live_argument_checks(
     monkeypatch.setattr(
         cli,
         "run_live",
-        lambda s, model=None: run_live(
+        lambda s, model=None, subagent_model=None: run_live(
             s, root=tmp_path, runner=fake_session(reference(scenario.id))
         ),
     )
     assert main(["--live", "--scenario", "prompt_injection"]) == 0
     assert main(["--scorecards"]) == 0
+
+
+def test_usage_table_reads_recorded_transcripts(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    import evals.__main__ as cli
+
+    scenario = SCENARIOS["prompt_injection"]
+    for _ in range(2):
+        run_live(scenario, root=tmp_path, runner=fake_session(reference(scenario.id)))
+    recorded = next(tmp_path.glob("prompt_injection-*/transcript.jsonl")).read_bytes()
+    other = tmp_path / "other-20260101T000000000000Z"
+    other.mkdir()
+    (other / "transcript.jsonl").write_bytes(recorded)
+    no_usage = tmp_path / "prompt_injection-20260101T000000000000Z"
+    no_usage.mkdir()
+    write_transcript(no_usage / "transcript.jsonl", [])
+    monkeypatch.setattr(cli, "LIVE_ROOT", tmp_path)
+
+    assert main(["--usage", "--scenario", "prompt_injection"]) == 0
+    lines = capsys.readouterr().out.splitlines()
+    assert lines[0].split()[:2] == ["run", "models"]
+    assert [line.split()[1] for line in lines[1:3]] == ["test-main", "test-main"]
+    assert lines[3].startswith("mean of 2 runs")
+    assert len(lines) == 4  # the run without usage and the other scenario are left out
+
+
+def test_subagent_model_is_passed_to_the_session(tmp_path: Path) -> None:
+    scenario = SCENARIOS["prompt_injection"]
+    seen: dict[str, str] = {}
+
+    def runner(cmd: list[str], session_env: dict[str, str], run_dir: Path) -> int:
+        seen.update(session_env)
+        return fake_session(reference(scenario.id))(cmd, session_env, run_dir)
+
+    result = run_live(scenario, root=tmp_path, runner=runner, subagent_model="sonnet")
+    assert seen["CLAUDE_CODE_SUBAGENT_MODEL"] == "sonnet"
+    agent = result.metrics["agent"]
+    assert agent["requested_models"] == {"session": None, "subagents": "sonnet"}
 
 
 def test_legacy_scorecards_are_upgraded_on_read(
@@ -385,3 +468,84 @@ def test_legacy_scorecards_are_upgraded_on_read(
     (run_dir / "scorecard.json").write_text(json.dumps(legacy), encoding="utf-8")
     monkeypatch.setattr(cli, "LIVE_ROOT", tmp_path)
     assert main(["--scorecards", "--scenario", "prompt_injection"]) == 1
+
+
+# --------------------------------------------------------------------------- keep_ids savings
+
+
+def stored_revisions(output_dir: Path, scenario_id: str) -> str:
+    """A run with three full revisions, as agents submitted them before keep_ids."""
+    candidate = reference(scenario_id)
+    runs = RunService(RunStore(output_dir))
+    run_id = runs.submit_story_analysis(StoryAnalysis.model_validate(candidate.analysis)).run_id
+    drafts = [TestCaseDraft.model_validate(d) for d in candidate.test_cases]
+    runs.submit_test_cases(run_id, drafts)
+    edited = drafts[0].model_copy(update={"objective": "Rewritten objective."})
+    runs.submit_test_cases(run_id, [edited, *drafts[1:-1]])  # one rewritten, one dropped
+    twin = drafts[1].model_copy(update={"objective": "Same title, other content."})
+    runs.submit_test_cases(run_id, [edited, *drafts[1:-1], twin])  # a duplicate title
+    return run_id
+
+
+def test_replay_with_keep_ids_is_equivalent_and_smaller(tmp_path: Path) -> None:
+    run_id = stored_revisions(tmp_path, "api_authorisation_and_validation")
+    result = replay(tmp_path, run_id)
+    assert (result.revisions, result.equivalent) == (3, True)
+    assert 0 < result.delta_bytes < result.full_bytes
+    assert RunStore(tmp_path).get_manifest(run_id).latest_revision == 3  # only read
+
+
+def test_replay_detects_a_revision_that_validates_differently(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import evals.savings as savings
+
+    run_id = stored_revisions(tmp_path, "tierless_promotion")
+    original = savings._outcome
+    calls = iter(range(100))
+    monkeypatch.setattr(savings, "_outcome", lambda r: (original(r), next(calls)))
+    assert replay(tmp_path, run_id).equivalent is False
+
+
+def test_cli_reports_resubmission_savings(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    import evals.__main__ as cli
+
+    stored_revisions(tmp_path / "output", "crm_campaign_personalisation")
+    live = tmp_path / "eval-runs" / "some_scenario-20260101T000000000000Z" / "output"
+    stored_revisions(live, "missing_requirements")
+    single = RunService(RunStore(tmp_path / "output"), None)
+    candidate = reference("missing_requirements")
+    analysis = StoryAnalysis.model_validate(candidate.analysis)
+    single.submit_story_analysis(analysis)  # no resubmission: not listed
+    corrupt = RunStore(tmp_path / "output").root / "20260101T000000Z-abcdef"
+    corrupt.mkdir()
+    (corrupt / "manifest.json").write_text(
+        json.dumps(
+            {
+                "run_id": corrupt.name,
+                "story_key": "DEMO-9",
+                "created_at": "2026-01-01T00:00:00Z",
+                "latest_revision": 2,
+            }
+        ),
+        encoding="utf-8",
+    )
+    (corrupt / "analysis.json").write_text("{}", encoding="utf-8")
+    monkeypatch.setattr(cli, "LIVE_ROOT", tmp_path / "eval-runs")
+
+    assert main(["--resubmit-savings", "--output-dir", str(tmp_path / "output")]) == 0
+    lines = capsys.readouterr().out.splitlines()
+    header, *runs, total = lines
+    assert header.startswith("run")
+    assert total.startswith("total of 2 replayed runs (1 legacy skipped)")
+    skipped = [r for r in runs if "skipped" in r]
+    assert [r.split()[0] for r in skipped] == [corrupt.name]
+    replayed = [r for r in runs if r not in skipped]
+    assert len(replayed) == 2  # the run without a resubmission is not listed
+    assert all(r.endswith("True") for r in replayed)
+    assert any(r.startswith("some_scenario-") for r in replayed)
+
+    monkeypatch.setattr(cli, "savings_table", lambda stores: (["x"], False))
+    assert main(["--resubmit-savings"]) == 1

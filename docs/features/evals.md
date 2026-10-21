@@ -119,7 +119,49 @@ built in; scorecards list these items so a score is never read as covering them.
 ```bash
 uv run python -m evals --live --scenario <id>   # run /qa-story headless + score
 uv run python -m evals --scorecards              # latest live scorecard per scenario
+uv run python -m evals --live --scenario <id> --subagent-model sonnet   # model A/B
+uv run python -m evals --usage [--scenario <id>]  # usage of recorded runs (free, no agents)
+uv run python -m evals --resubmit-savings         # keep_ids replay of stored runs (free)
 ```
+
+### Usage telemetry
+
+Every live scorecard records `usage` and `payload_bytes`, and `--usage` re-reads the
+recorded transcripts. What is **measured**, from Claude Code's own `stream-json` events:
+input, output, cache-write and cache-read tokens and cost per model (`result.modelUsage`;
+the cost is Claude Code's estimate at list prices, not an invoice); per subagent its
+invocations, the model(s) its messages came from, and its token total, tool uses and
+duration (`task_notification`); turns and wall time. JSON request and response sizes per
+tool are measured in **bytes, not tokens**. Not available: an exact split of the
+per-subagent token total into input and output, and token counts per tool call. Only
+names, counts and sizes are recorded, never prompt or tool content.
+
+Model routing: each agent declares `model: inherit` (the session model). Change one
+agent's frontmatter to route it elsewhere (`sonnet`, `opus`, `haiku` or a full model id),
+or set `CLAUDE_CODE_SUBAGENT_MODEL` for every subagent (`--subagent-model` does this
+for a live run). The models actually used appear in `usage.agents`. Change a default only
+after live runs of several scenarios show no lost checks.
+
+`--resubmit-savings` replays every stored run (`--output-dir` and the live runs) through
+`submit_test_cases` with `keep_ids` (`evals/savings.py`): unchanged cases are kept, the
+rest re-sent. It reports full vs. keep request bytes and whether each replayed revision
+has the same case contents and validation outcome as the recorded one (exit 1 if not).
+It measures bytes on recorded runs; whether agents use `keep_ids` as intended is only
+measured by a live run (`payload_bytes` of `submit_test_cases` in `--usage`).
+
+### Smallest model A/B (not run yet; needs approval, costs tokens)
+
+- Arms: A = current config (subagents inherit the session model), B =
+  `--subagent-model sonnet`. Same session model in both, so only the subagents differ.
+- Scenarios: two with opposite demands: `api_authorisation_and_validation` (well
+  specified, many negative cases) and `conflicting_acceptance_criteria` (gaps, blocked
+  cases, export readiness). Two runs per arm and scenario: 8 runs in total. At the
+  recorded $1.3-2.7 per Opus run, arm A costs about $10; arm B is expected to cost less.
+- Pass rule: B is acceptable for routine work only if, per scenario, every check that
+  passes in both A runs also passes in both B runs, and `usage.agents` shows the subagents
+  actually ran on the requested model. Compare cost and tokens with `--usage`.
+- Then, if B passes, try a per-agent split (e.g. `model: sonnet` only for story-analyst
+  and test-designer, the reviewer inherits) the same way before changing any default.
 
 `--live` creates `output/eval-runs/<scenario>-<timestamp>/` and runs `claude -p
 "/qa-story <KEY>"` with a dedicated qa-assistant MCP server whose Jira backend is the

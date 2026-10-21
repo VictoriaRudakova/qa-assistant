@@ -33,6 +33,36 @@ access to read a run, however many test cases it has:
 
 Paged tools return `total` and `next_offset`; follow `next_offset` until it is `null`.
 
+## Revising test cases
+
+Every `submit_test_cases` call stores a complete new revision, but a revision does not
+have to be re-sent in full: `keep_ids` names cases of `keep_from_revision` that the server
+copies verbatim (content and traceability), followed by `test_cases` (new or rewritten
+cases). Every revision is still stored in full and validated as a whole, so readiness
+rules and export gates apply to kept cases exactly as to re-sent ones.
+
+| Rule | Why |
+|---|---|
+| `keep_from_revision` is required with `keep_ids` and must be the run's latest revision (older: `invalid_artifact` "stale"; unknown: `not_found`) | A caller working from an old revision cannot discard newer changes |
+| Unknown or duplicate `keep_ids` are refused; nothing is stored | No guessing |
+| A kept case may not also be re-sent with the same (normalized) title | A replacement must not silently leave the old case in place |
+| `not_kept` lists every base case that is not kept (replaced or dropped) | Deletions are explicit in the result |
+| Ids are assigned TC-001.. in order: kept cases in `keep_ids` order, then `test_cases`; `kept` maps old to new ids | Deterministic renumbering, as for a full resubmission |
+
+In recorded live runs 69% of resubmitted bytes were unchanged cases, which the agent had
+to generate again as output tokens (`python -m evals --resubmit-savings` replays stored runs
+and reports this; legacy runs that predate the schema are listed as skipped and are not
+in the totals).
+
+Known limits:
+- **Semantic review.** The server checks structure, not intent. A replacement under a
+  *new* title while the old case is still kept is accepted; only the agent checking
+  `not_kept` (and the reviewer) catches it. Whether a kept case is still the right test is
+  a review judgement.
+- **Concurrent writes.** The run store has no lock. The stale check covers a caller using
+  an old base, but two simultaneous submissions to one run can race; the server is meant
+  for one local user. A full resubmission (no `keep_ids`) has no stale check.
+
 `get_story_analysis` returns JSON text with no output schema: `StoryAnalysis` has a computed
 risk severity that can't appear in a validation-mode output schema without also changing the
 input schema of `submit_story_analysis`.

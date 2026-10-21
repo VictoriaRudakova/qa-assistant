@@ -6,6 +6,8 @@
     uv run python -m evals --scenario <ID> --run-id <RUN_ID>   # + the scenario's reference
     uv run python -m evals --live --scenario <ID>   # run the real agents (costs tokens)
     uv run python -m evals --scorecards          # latest live scorecard per scenario
+    uv run python -m evals --usage               # tokens/cost/payloads of recorded live runs
+    uv run python -m evals --resubmit-savings    # keep_ids replay of stored runs (bytes)
     uv run python -m evals --list                # scenarios and the checks they support
     uv run python -m evals --dimensions          # quality aspects: measured vs needs review
     uv run python -m evals --json results.json   # machine-readable results
@@ -23,8 +25,9 @@ from pathlib import Path
 
 from evals.checks import CHECKS, UNIVERSAL_CHECKS
 from evals.harness import evaluate_candidate, evaluate_stored_run
-from evals.live import LIVE_ROOT, run_live
+from evals.live import LIVE_ROOT, run_live, usage_table
 from evals.report import EvalResult, aspect_matrix, scorecard, table
+from evals.savings import savings_table
 from evals.scenario import load_candidates, load_scenarios
 
 
@@ -42,7 +45,21 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--live", action="store_true", help="Run /qa-story headless and score it")
     parser.add_argument("--model", help="Model for --live (default: your Claude Code default)")
     parser.add_argument(
+        "--subagent-model", help="Model for every subagent in --live (default: as configured)"
+    )
+    parser.add_argument(
         "--scorecards", action="store_true", help=f"Show the latest scorecards in {LIVE_ROOT}"
+    )
+    parser.add_argument(
+        "--usage",
+        action="store_true",
+        help=f"Token, cost and payload usage of the live runs in {LIVE_ROOT} (no agent is run)",
+    )
+    parser.add_argument(
+        "--resubmit-savings",
+        action="store_true",
+        help="Replay the runs in --output-dir and the live runs with keep_ids: request bytes "
+        "saved and whether the replay is equivalent (no agent is run)",
     )
     parser.add_argument("--list", action="store_true", help="List scenarios and their checks")
     parser.add_argument(
@@ -54,6 +71,16 @@ def main(argv: list[str] | None = None) -> int:
         for line in aspect_matrix():
             _print(line)
         return 0
+    if args.usage:  # recorded runs may predate a scenario rename: match by name prefix
+        for line in usage_table(LIVE_ROOT, args.scenario):
+            _print(line)
+        return 0
+    if args.resubmit_savings:
+        live = [(p.parent.name, p) for p in sorted(LIVE_ROOT.glob("*/output"))]
+        rows, equivalent = savings_table([("", args.output_dir), *live])
+        for line in rows:
+            _print(line)
+        return 0 if equivalent else 1
     scenarios = [s for s in load_scenarios() if args.scenario in (None, s.id)]
     if not scenarios:
         parser.error(f"unknown scenario {args.scenario!r}")
@@ -69,7 +96,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.scorecards:
         results = _latest_scorecards({s.id for s in scenarios})
     elif args.live:
-        results = [run_live(scenarios[0], model=args.model)]
+        results = [run_live(scenarios[0], model=args.model, subagent_model=args.subagent_model)]
     elif args.run_id:
         scenario = scenarios[0] if args.scenario else None
         results = [evaluate_stored_run(scenario, args.output_dir, args.run_id)]

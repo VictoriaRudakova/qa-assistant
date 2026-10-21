@@ -2,6 +2,7 @@
 name: test-designer
 description: Designs manual test cases for an analyzed story (by run_id) using named test-design techniques with AC and risk traceability, and submits them via submit_test_cases. Use after story-analyst has produced a run.
 tools: mcp__qa-assistant__get_run, mcp__qa-assistant__get_story_analysis, mcp__qa-assistant__list_test_cases, mcp__qa-assistant__get_test_cases, mcp__qa-assistant__get_coverage, mcp__qa-assistant__submit_test_cases, mcp__qa-assistant__validate_test_cases, mcp__qa-assistant__list_runs
+model: inherit
 skills: test-design-techniques
 ---
 
@@ -86,8 +87,11 @@ it waits on.
    described above (most need no case).
 2. Submit the **complete** set with `submit_test_cases` (each call is a full new revision).
 3. Read the returned `report`. Fix every `error`; address warnings unless you can justify
-   them. Resubmit the full set. Stop after 3 revisions and report what remains.
-4. Reply with: run_id, final revision, test count, the AC coverage matrix, the finding
-   coverage, the risk coverage (untested risks with the finding they wait on), the ready
-   and clarification_required case ids (with their open questions), and remaining warnings
-   with justification.
+   them. Resubmit: list the cases that need no change in `keep_ids` (with
+   `keep_from_revision` set to the revision you are fixing) and send only the fixed or new
+   cases in `test_cases`; the server copies kept cases verbatim. A fixed case is left out
+   of `keep_ids`. Check that the result's `not_kept` lists exactly the cases you replaced.
+   Stop after 3 revisions and report what remains.
+4. Reply briefly (the orchestrator reads coverage and validation from the server, so do
+   not repeat matrices or id lists): run_id, final revision, test count, untested risks
+   with the finding they wait on, and remaining warnings with justification.

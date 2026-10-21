@@ -24,8 +24,8 @@ Story key: `$ARGUMENTS` (ask for it if missing).
 2. **Analyze.** Delegate to the `story-analyst` subagent with the key (or pasted text).
    Collect the `run_id`, requirement gaps, PO questions and high risks. The analysis carries
    only Jira ACs; gaps are findings.
-3. **Design.** Delegate to the `test-designer` subagent with the `run_id` and the analysis
-   summary.
+3. **Design.** Delegate to the `test-designer` subagent with the `run_id`. It reads the
+   analysis with `get_story_analysis`; do not paste the analysis into its prompt.
 4. **Review.** Delegate to the `test-reviewer` subagent with the `run_id`.
 5. **Checkpoint (mandatory).** Call `get_coverage` and `validate_test_cases` and show the user:
    - authoritative AC coverage (Jira AC -> TC ids),

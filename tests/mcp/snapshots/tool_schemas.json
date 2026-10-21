@@ -1680,7 +1680,7 @@
     }
   },
   "submit_test_cases": {
-    "description": "Submit the complete set of manual test cases for a run as a new revision. Ids\n        (TC-001..) are assigned in order. Mark a case clarification_required (with\n        open_question_ids) when its expected behaviour depends on an unanswered question.\n        Returns the validation report; errors must be fixed by submitting a new full\n        revision before export.",
+    "description": "Submit the complete set of manual test cases for a run as a new revision: the\n        kept cases (keep_ids) followed by test_cases. Ids (TC-001..) are assigned in that\n        order; `kept` maps old to new ids and `not_kept` lists the base cases you replaced\n        or dropped: check it. Mark a case clarification_required (with\n        open_question_ids) when its expected behaviour depends on an unanswered question.\n        Returns the validation report; errors must be fixed by submitting a new revision\n        before export.",
     "inputSchema": {
       "$defs": {
         "Priority": {
@@ -1866,6 +1866,39 @@
         }
       },
       "properties": {
+        "keep_from_revision": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required with keep_ids: the latest revision, which you read. An older revision is refused as stale.",
+          "title": "Keep From Revision"
+        },
+        "keep_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "description": "e.g. TC-001",
+                "pattern": "^TC-\\d{3,}$",
+                "type": "string"
+              },
+              "maxItems": 200,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unchanged cases to copy verbatim from keep_from_revision, in this order, instead of re-sending them",
+          "title": "Keep Ids"
+        },
         "run_id": {
           "description": "Run identifier, e.g. 20261005T154400Z-a1b2c3",
           "pattern": "^\\d{8}T\\d{6}Z-[0-9a-f]{6}$",
@@ -1873,11 +1906,11 @@
           "type": "string"
         },
         "test_cases": {
+          "description": "New or rewritten cases, after the kept ones",
           "items": {
             "$ref": "#/$defs/TestCaseDraft"
           },
           "maxItems": 200,
-          "minItems": 1,
           "title": "Test Cases",
           "type": "array"
         }
@@ -2037,6 +2070,44 @@
       },
       "additionalProperties": false,
       "properties": {
+        "kept": {
+          "description": "Kept case: id in kept_from_revision -> new id",
+          "patternProperties": {
+            "^TC-\\d{3,}$": {
+              "description": "e.g. TC-001",
+              "pattern": "^TC-\\d{3,}$",
+              "type": "string"
+            }
+          },
+          "propertyNames": {
+            "description": "e.g. TC-001"
+          },
+          "title": "Kept",
+          "type": "object"
+        },
+        "kept_from_revision": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Revision the kept cases were copied from",
+          "title": "Kept From Revision"
+        },
+        "not_kept": {
+          "description": "Cases of kept_from_revision not kept (replaced by test_cases or dropped)",
+          "items": {
+            "description": "e.g. TC-001",
+            "pattern": "^TC-\\d{3,}$",
+            "type": "string"
+          },
+          "title": "Not Kept",
+          "type": "array"
+        },
         "report": {
           "$ref": "#/$defs/ValidationReport"
         },

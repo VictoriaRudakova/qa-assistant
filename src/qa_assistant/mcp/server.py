@@ -130,14 +130,37 @@ def create_server(deps: ServerDependencies) -> MCPServer:
     @_domain_errors_as_tool_errors
     def submit_test_cases(
         run_id: RunId,
-        test_cases: Annotated[list[TestCaseDraft], Field(min_length=1, max_length=200)],
+        test_cases: Annotated[
+            list[TestCaseDraft],
+            Field(max_length=200, description="New or rewritten cases, after the kept ones"),
+        ],
+        keep_ids: Annotated[
+            list[TestCaseId] | None,
+            Field(
+                max_length=200,
+                description="Unchanged cases to copy verbatim from keep_from_revision, in "
+                "this order, instead of re-sending them",
+            ),
+        ] = None,
+        keep_from_revision: Annotated[
+            int | None,
+            Field(
+                ge=1,
+                description="Required with keep_ids: the latest revision, which you read. "
+                "An older revision is refused as stale.",
+            ),
+        ] = None,
     ) -> SubmitTestCasesResult:
-        """Submit the complete set of manual test cases for a run as a new revision. Ids
-        (TC-001..) are assigned in order. Mark a case clarification_required (with
+        """Submit the complete set of manual test cases for a run as a new revision: the
+        kept cases (keep_ids) followed by test_cases. Ids (TC-001..) are assigned in that
+        order; `kept` maps old to new ids and `not_kept` lists the base cases you replaced
+        or dropped: check it. Mark a case clarification_required (with
         open_question_ids) when its expected behaviour depends on an unanswered question.
-        Returns the validation report; errors must be fixed by submitting a new full
-        revision before export."""
-        return deps.runs.submit_test_cases(run_id, test_cases)
+        Returns the validation report; errors must be fixed by submitting a new revision
+        before export."""
+        return deps.runs.submit_test_cases(
+            run_id, test_cases, keep_ids=keep_ids or (), keep_from_revision=keep_from_revision
+        )
 
     @server.tool(annotations=READ_ONLY)
     @_domain_errors_as_tool_errors

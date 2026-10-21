@@ -194,6 +194,27 @@ async def test_run_is_read_in_sections(client: Client) -> None:
 
 
 @pytest.mark.anyio
+async def test_revision_keeps_unchanged_cases_by_id(client: Client) -> None:
+    analysis = load_json("analysis/DEMO-101.analysis.json")
+    run_id = (await call_ok(client, "submit_story_analysis", {"analysis": analysis}))["run_id"]
+    drafts = load_json("test_cases/DEMO-101.drafts.json")
+    await call_ok(client, "submit_test_cases", {"run_id": run_id, "test_cases": drafts})
+
+    keep = ["TC-001", "TC-002", "TC-003", "TC-004"]
+    revised = await call_ok(
+        client,
+        "submit_test_cases",
+        {"run_id": run_id, "test_cases": drafts[4:], "keep_ids": keep, "keep_from_revision": 1},
+    )
+    assert (revised["revision"], revised["test_case_count"]) == (2, 5)
+    assert revised["kept"] == {i: i for i in keep}
+    assert revised["report"]["valid"] is True
+
+    error = await call_error(client, "submit_test_cases", {"run_id": run_id, "test_cases": []})
+    assert "at least one" in error
+
+
+@pytest.mark.anyio
 async def test_analysis_with_invented_acceptance_criterion_is_rejected(client: Client) -> None:
     analysis = load_json("analysis/DEMO-101.analysis.json")
     analysis["acceptance_criteria"].append(

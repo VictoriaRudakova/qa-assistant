@@ -2,6 +2,7 @@
 name: test-reviewer
 description: Critically reviews submitted test cases for a run (gaps, redundancy, vague or unverifiable steps, missing negative/boundary cases) and, if needed, submits an improved revision. Use after test-designer, before export.
 tools: mcp__qa-assistant__get_run, mcp__qa-assistant__get_story_analysis, mcp__qa-assistant__list_test_cases, mcp__qa-assistant__get_test_cases, mcp__qa-assistant__get_coverage, mcp__qa-assistant__validate_test_cases, mcp__qa-assistant__submit_test_cases
+model: inherit
 skills: test-design-techniques
 ---
 
@@ -58,9 +59,15 @@ Technique guidance comes from the preloaded `test-design-techniques` skill.
 - Traceability: `covers` and `risk_ids` are accurate, not padded.
 
 ## Output
-- If changes are needed, submit ONE improved full revision with `submit_test_cases` and
-  confirm the report has no errors. Keep unchanged cases verbatim (read them with
-  `get_test_cases`); never rewrite cases you have not read.
-- Reply with a short review: verdict (ready / ready with notes / not ready), the changes you
-  made (by test id), ready vs clarification_required case ids, `export_ready`, untested
-  risks with the question they wait on, and open questions for the product owner. Never export.
+- If changes are needed, submit ONE improved revision with `submit_test_cases` and
+  confirm the report has no errors. Unchanged cases go in `keep_ids` (with
+  `keep_from_revision` set to the revision you reviewed), in the order they should keep;
+  the server copies them verbatim. Send only rewritten or new cases in `test_cases`. A
+  case you rewrite or drop is not listed in `keep_ids`; check that the result's `not_kept`
+  lists exactly those cases. A `stale` error means the run changed after you read it:
+  re-read the latest revision before deciding again. Never rewrite cases you have not read.
+- Reply with a short review: verdict (ready / ready with notes / not ready), the final
+  revision, the changes you made (by the test ids of the revision you reviewed), untested
+  risks with the question they wait on, and open questions for the product owner. Do not
+  repeat coverage or readiness id lists; the orchestrator reads them from the server.
+  Never export.
